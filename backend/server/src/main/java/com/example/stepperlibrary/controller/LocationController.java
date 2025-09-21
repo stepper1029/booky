@@ -36,8 +36,8 @@ public class LocationController {
   /**
    * Get locations for a specific user
    */
-  @GetMapping("/user/locations")
-  public List<Location> getLocationsByUser(@RequestParam int userId) {
+  @GetMapping
+  public List<Location> getLocationsByUserId(@RequestParam Integer userId) {
     return locationService.getLocationsByUserId(userId);
   }
 

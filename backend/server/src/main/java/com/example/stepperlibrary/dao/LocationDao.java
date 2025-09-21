@@ -12,4 +12,5 @@ public interface LocationDao extends JpaRepository<Location, Integer> {
   List<Location> findByUserId(Integer userId);
 
   int countByUserId(Integer userId);
+
 }

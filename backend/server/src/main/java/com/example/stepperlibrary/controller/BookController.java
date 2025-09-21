@@ -36,29 +36,27 @@ public class BookController {
       return bookService.countAllByLocationId(locationId);
     }
 
-    @GetMapping("/books")
-    public List<Book> getAllBooks() {
-      return bookService.getAllBooksSortedByAuthor();
-    }
+  @GetMapping("/books/location")
+  public List<Book> getBooksByLocation(
+          @RequestParam Integer locationId,
+          @RequestParam(required = false) String search) {
+    return bookService.getBooksByLocationId(locationId, search);
+  }
 
-    @GetMapping("/books/search/title")
-    public List<Book> searchByTitle(@RequestParam String title) {
-      return bookService.searchByTitleSortedByAuthor(title);
-    }
 
-    @GetMapping("/books/search/author")
-    public List<Book> searchByAuthor(@RequestParam String author) {
-      return bookService.searchByAuthor(author);
-    }
-
-    @GetMapping("/books/search/location")
-    public List<Book> searchByLocation(@RequestParam Integer locationId) {
-      return bookService.searchByLocationSortedByAuthor(locationId);
-    }
-
-    @PostMapping("/books")
+  @PostMapping("/books")
     public Book addBook(@RequestBody Book book) {
       return bookService.addBook(book);
     }
+
+
+    // GOOGLE BOOKS APIS
+
+  @GetMapping("/books/googlecover")
+  public String getGoogleBookCover(@RequestParam String isbn) {
+    String coverUrl = bookService.getGoogleBookCover(isbn);
+    return coverUrl != null ? coverUrl : "";
+  }
+
 }
 

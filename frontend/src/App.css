@@ -15,12 +15,46 @@ html, body {
   padding:0;
 }
 
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  color: #28282A;
+  letter-spacing: 0.5rem;
+}
+
 .page-title {
   margin-left: 5rem;
   font-size: xx-large;
   letter-spacing: 0.5rem;
-  flex: 2;
+  flex: 3;
 }
+
+.header-search {
+  align-items: baseline;
+  padding-left: 8rem;
+  flex: 2;
+  font-size: x-large;
+  letter-spacing: 0.2rem;
+  text-align: right;
+  margin-right: 5rem;
+  color: #00000080;
+  border-bottom: 3px solid #CD1C18;
+  margin-bottom: 3.5rem;
+  padding-bottom: .5rem;
+}
+
+.header-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #00000080;
+  font-size: x-large;
+  text-align: right;
+  letter-spacing: 0.2rem;
+  width: 100%;
+}
+
 
 .page-body{
   display: flex;
@@ -28,7 +62,7 @@ html, body {
 }
 
 /******************************************************************/
-/********************* BROWSE STYLING **************************/
+/************************ BROWSE STYLING **************************/
 /******************************************************************/
 
 .browse-grid{
@@ -57,17 +91,65 @@ html, body {
 .sidebar {
   margin-top: 5rem;
   flex: 2;
-  line-height: 60px;
   font-size: x-large;
   text-align: center;
-  align-items: center;
   height: 40vh;
   border-right: 3px solid #CD1C18;
+
+  display: flex;           /* enable flexbox */
+  flex-direction: column;  /* stack items vertically */
+  justify-content: center; /* vertical centering */
+  align-items: center;     /* horizontal centering if desired */
 }
+
+.sidebar p {
+  cursor: pointer;
+  position: relative;
+}
+
+.sidebar p.active-location {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;   /* thicker underline */
+  text-underline-offset: 12px;       /* distance from text */
+  text-decoration-color: #28282A;   /* underline color */
+}
+
 
 .book-grid {
   flex: 4;
+  margin: 5rem;
+  display: grid;
+  gap: 3rem 6rem;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  overflow-y: auto;
 }
+
+/* Book container */
+.book-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-cover {
+  height: 140px; /* shorter height */
+  object-fit: cover;
+}
+
+/* Placeholder for books without covers */
+.book-cover-placeholder {
+  height: 140px; /* shorter height */
+  object-fit: cover;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
 
 
 

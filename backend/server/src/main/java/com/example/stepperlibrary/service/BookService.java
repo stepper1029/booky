@@ -2,15 +2,26 @@ package com.example.stepperlibrary.service;
 
 import com.example.stepperlibrary.model.Book;
 import com.example.stepperlibrary.dao.BookDao;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BookService {
   private final BookDao dao;
+  private final ObjectMapper objectMapper;
+  private final RestTemplate restTemplate;
 
-  public BookService(BookDao dao) {
+  public BookService(BookDao dao, ObjectMapper objectMapper) {
     this.dao = dao;
+    this.objectMapper = objectMapper;
+    this.restTemplate = new RestTemplate();
   }
 
   public int countAllByUserId(int userId) {
@@ -21,21 +32,13 @@ public class BookService {
     return dao.countAllByLocationId(locationId);
   }
 
-  public List<Book> getAllBooksSortedByAuthor() {
-    return dao.findAllByOrderByAuthorLastNameAsc();
+  public List<Book> getBooksByLocationId(Integer locationId, String search) {
+    if (search == null || search.isEmpty()) {
+      return dao.findByLocationId(locationId);
+    }
+    return dao.searchByLocationAndTitleOrAuthor(locationId, search);
   }
 
-  public List<Book> searchByTitleSortedByAuthor(String title) {
-    return dao.findByTitleContainingIgnoreCaseOrderByAuthorLastNameAsc(title);
-  }
-
-  public List<Book> searchByAuthor(String author) {
-    return dao.findByAuthorFirstNameContainingIgnoreCaseOrAuthorLastNameContainingIgnoreCaseOrderByAuthorLastNameAsc(author, author);
-  }
-
-  public List<Book> searchByLocationSortedByAuthor(Integer locationId) {
-    return dao.findByLocationIdOrderByAuthorLastNameAsc(locationId);
-  }
 
   /**
    * Adds a new book to the database.
@@ -46,5 +49,32 @@ public class BookService {
     // Save the book using the DAO (JPA repository)
     return dao.save(book);
   }
+
+
+  // GOOGLE BOOKS
+
+  public String getGoogleBookCover(String isbn) {
+    try {
+      String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
+      String response = restTemplate.getForObject(url, String.class);
+
+      JsonNode root = objectMapper.readTree(response);
+      JsonNode items = root.path("items");
+
+      if (items.isArray() && items.size() > 0) {
+        JsonNode volumeInfo = items.get(0).path("volumeInfo");
+        JsonNode imageLinks = volumeInfo.path("imageLinks");
+        JsonNode thumbnail = imageLinks.path("thumbnail");
+
+        if (!thumbnail.isMissingNode()) {
+          return thumbnail.asText();
+        }
+      }
+    } catch (Exception e) {
+      System.err.println("Error fetching Google Books cover: " + e.getMessage());
+    }
+    return null; // fallback if no cover found
+  }
+
 }
 

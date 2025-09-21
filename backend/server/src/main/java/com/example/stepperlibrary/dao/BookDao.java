@@ -16,14 +16,19 @@ public interface BookDao extends JpaRepository<Book, Long> {
 
   int countAllByLocationId(Integer locationId);
 
-  List<Book> findAllByOrderByAuthorLastNameAsc();
+  List<Book> findByLocationId(Integer locationId);
 
-  List<Book> findByTitleContainingIgnoreCaseOrderByAuthorLastNameAsc(String title);
-
-  List<Book> findByAuthorFirstNameContainingIgnoreCaseOrAuthorLastNameContainingIgnoreCaseOrderByAuthorLastNameAsc(
-          String firstName, String lastName);
-
-  List<Book> findByLocationIdOrderByAuthorLastNameAsc(Integer locationId);
+  @Query("""
+    SELECT b FROM Book b 
+    WHERE b.locationId = :locationId AND 
+          (LOWER(b.title) LIKE LOWER(CONCAT('%', :search, '%')) 
+           OR LOWER(b.authorFirstName) LIKE LOWER(CONCAT('%', :search, '%')) 
+           OR LOWER(b.authorLastName) LIKE LOWER(CONCAT('%', :search, '%')))
+""")
+  List<Book> searchByLocationAndTitleOrAuthor(
+          @Param("locationId") Integer locationId,
+          @Param("search") String search
+  );
 }
 
 
