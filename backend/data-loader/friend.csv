@@ -1,4 +1,4 @@
-user1,user2,startDate,status
-1,2,10/29/2004,accepted
-2,3,1/21/2021,accepted
-1,3,9/16/2025,accepted
+user1id,user2id,startdate,status
+1,2,2004-10-29,accepted
+2,3,2021-01-21,accepted
+1,3,2025-09-16,accepted

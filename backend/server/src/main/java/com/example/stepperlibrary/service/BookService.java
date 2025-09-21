@@ -13,6 +13,14 @@ public class BookService {
     this.dao = dao;
   }
 
+  public int countAllByUserId(int userId) {
+    return dao.countAllByUserId(userId);
+  }
+
+  public int countAllByLocationId(int locationId) {
+    return dao.countAllByLocationId(locationId);
+  }
+
   public List<Book> getAllBooksSortedByAuthor() {
     return dao.findAllByOrderByAuthorLastNameAsc();
   }

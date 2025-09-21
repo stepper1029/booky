@@ -7,36 +7,40 @@ import java.time.LocalDate;
 @Table(name = "book")
 public class Book {
   @Id
-  @Column(length = 13)
+  @Column(name = "isbn")
   private String isbn;
 
-  @Column(length = 10)
+  @Column(name = "isbn10")
   private String isbn10;
 
-  @Column(name = "location_id")
+  @Column(name = "locationid")
   private Integer locationId;
+
+  @Column(name = "userid", nullable = false)
+  private Integer userId;
 
   private String title;
 
-  @Column(name = "author_first_name")
+  @Column(name = "authorfirstname")
   private String authorFirstName;
 
-  @Column(name = "author_last_name")
+  @Column(name = "authorlastname")
   private String authorLastName;
 
   @Column(columnDefinition = "TEXT")
   private String blurb;
 
-  @Column(name = "date_added")
+  @Column(name = "dateadded")
   private LocalDate dateAdded;
 
-  // Getters and setters
   public String getIsbn() { return isbn; }
   public void setIsbn(String isbn) { this.isbn = isbn; }
   public String getIsbn10() { return isbn10; }
   public void setIsbn10(String isbn10) { this.isbn10 = isbn10; }
   public Integer getLocationId() { return locationId; }
   public void setLocationId(Integer locationId) { this.locationId = locationId; }
+  public Integer getUserId() { return userId; }
+  public void setUserId(Integer userId) { this.userId = userId; }
   public String getTitle() { return title; }
   public void setTitle(String title) { this.title = title; }
   public String getAuthorFirstName() { return authorFirstName; }

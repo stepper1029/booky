@@ -1,37 +1,33 @@
 #!/bin/bash
-set -e  # exit on error
+set -euo pipefail
 
-# Environment variables from docker-compose
-DB_HOST=${POSTGRES_HOST:-postgres}
-DB_PORT=${POSTGRES_PORT:-5432}
-DB_USER=${POSTGRES_USER:-root}
-DB_PASS=${POSTGRES_PASSWORD:-root}
-DB_NAME=${POSTGRES_DB:-stepper}
+CONTAINER_NAME=stepper-db
+DB_NAME=stepper
+DB_USER=root
 
-# Wait for Postgres to be ready
-echo "⏳ Waiting for Postgres to start..."
-until PGPASSWORD=$DB_PASS psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c '\q' 2>/dev/null; do
-  sleep 1
-done
-echo "✅ Postgres is up!"
+# CSV directory is the current directory
+CSV_DIR=$(dirname "$0")
 
-# Function to load a CSV
-load_csv() {
-  local table=$1
-  local file=$2
-  echo "📥 Loading $file into $table..."
+echo "📥 Loading CSV data into $DB_NAME..."
 
-  # Truncate table first to avoid duplicates
-  PGPASSWORD=$DB_PASS psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "TRUNCATE TABLE $table RESTART IDENTITY CASCADE;"
+# Users
+docker exec -i $CONTAINER_NAME \
+  psql -U $DB_USER -d $DB_NAME \
+  -c "\copy users(id, username, fullname, bio, joindate, topone, toptwo, topthree, topfour) FROM STDIN CSV HEADER" < "$CSV_DIR/user.csv"
 
-  # Load CSV
-  PGPASSWORD=$DB_PASS psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "\copy $table FROM '$file' WITH CSV HEADER;"
-}
+# Locations
+docker exec -i $CONTAINER_NAME \
+  psql -U $DB_USER -d $DB_NAME \
+  -c "\copy location(id, name, userid) FROM STDIN CSV HEADER" < "$CSV_DIR/location.csv"
 
-# Load CSVs in dependency order
-load_csv users "user.csv"
-load_csv location "location.csv"
-load_csv book "book.csv"
-load_csv friend "friend.csv"
+# Books
+docker exec -i $CONTAINER_NAME \
+  psql -U $DB_USER -d $DB_NAME \
+  -c "\copy book(isbn, isbn10, locationid, userid, title, authorfirstname, authorlastname, blurb, dateadded) FROM STDIN CSV HEADER" < "$CSV_DIR/book.csv"
+
+# Friends
+docker exec -i $CONTAINER_NAME \
+  psql -U $DB_USER -d $DB_NAME \
+  -c "\copy friend(user1id, user2id, startdate, status) FROM STDIN CSV HEADER" < "$CSV_DIR/friend.csv"
 
 echo "✅ All CSVs loaded successfully!"

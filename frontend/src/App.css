@@ -1,38 +1,153 @@
-.App {
-  text-align: center;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* ensures full height for child elements */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.app-container {
+  font-family: 'DM Mono', monospace;
+  color: #28282A;
+  background-color: #F5F5F3;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+  padding:0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.page-title {
+  margin-left: 5rem;
+  font-size: xx-large;
+  letter-spacing: 0.5rem;
+  flex: 2;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.page-body{
   display: flex;
-  flex-direction: column;
+  height: 60vh;
+}
+
+/******************************************************************/
+/********************* BROWSE STYLING **************************/
+/******************************************************************/
+
+.browse-grid{
+  flex: 1;
+}
+
+.browse-search{
+  flex: 1;
+  height: 9vh;
+  color: #00000080;
+  text-align: right;
+  margin-right: 5rem;
+  font-size: x-large;
   align-items: center;
+  padding-top: 10rem;
+  margin-left: 10rem;
+  border-bottom: 3px solid #CD1C18;
+}
+
+/******************************************************************/
+/********************* LIBRARIES STYLING **************************/
+/******************************************************************/
+
+
+
+.sidebar {
+  margin-top: 5rem;
+  flex: 2;
+  line-height: 60px;
+  font-size: x-large;
+  text-align: center;
+  align-items: center;
+  height: 40vh;
+  border-right: 3px solid #CD1C18;
+}
+
+.book-grid {
+  flex: 4;
+}
+
+
+
+/******************************************************************/
+/********************* PROFILE STYLING ****************************/
+/******************************************************************/
+
+.profile-header{
+  display: flex;
+  align-items: baseline;
+  color: #28282A;
+  letter-spacing: 0.5rem;
+}
+
+.username{
+  flex: 1;
+  font-size: xx-large;
+  letter-spacing: 0.2rem;
+  text-align: right;
+  margin-right: 5rem;
+}
+
+.split {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.profile-left {
+  margin-top: 5rem;
+  flex: 1;
+  line-height: 60px;
+  font-size: xx-large;
+  text-align: center;
+  align-items: center;
+  border-right: 3px solid #CD1C18;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.profile-right {
+  flex: 1;
 }
+
+
+/******************************************************************/
+/***************************** FONTS ******************************/
+/******************************************************************/
+
+
+.dm-mono-light {
+  font-family: "DM Mono", monospace;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.dm-mono-regular {
+  font-family: "DM Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.dm-mono-medium {
+  font-family: "DM Mono", monospace;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.dm-mono-light-italic {
+  font-family: "DM Mono", monospace;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.dm-mono-regular-italic {
+  font-family: "DM Mono", monospace;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.dm-mono-medium-italic {
+  font-family: "DM Mono", monospace;
+  font-weight: 500;
+  font-style: italic;
+}
+

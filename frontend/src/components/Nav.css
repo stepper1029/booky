@@ -1,0 +1,40 @@
+.nav {
+    display: flex;
+    font-size: medium;
+    justify-content: space-between;
+    align-items: center;
+    color: #28282A;
+    border-bottom: 2px solid #28282A;
+    width: 100%;
+    height: 80px;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-left {
+    padding-left: 5rem;
+    font-size: small;
+}
+
+.nav-right {
+    gap: 6rem;
+    padding-right: 5rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #28282A;
+    position: relative;
+    margin-left: 4rem;
+}
+
+.nav-link.active::after {
+    content: "";
+    display: block;
+    height: 2px;
+    width: 100%;
+    background-color: #28282A; /* underline color */
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+}
