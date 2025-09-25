@@ -4,37 +4,55 @@ const Profile = () => {
     const [locationCount, setLocationCount] = useState(0);
     const [bookCount, setBookCount] = useState(0);
     const [friendCount, setFriendCount] = useState(0);
-    const [username, setUsername] = useState("");
+    const [thisUser, setUser] = useState(null);
+    const [books, setBooks] = useState([]);
     const userId = 1;
 
-    const fetchJSON = async (url, setter) => {
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`Failed to fetch ${url}`);
-            const data = await res.json();
-            setter(Number(data));
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    const fetchText = async (url, setter) => {
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`Failed to fetch ${url}`);
-            const data = await res.text();
-            setter(data);
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
+    // Fetch counts and user
     useEffect(() => {
-        fetchJSON(`/api/locations/count?userId=${userId}`, setLocationCount);
-        fetchJSON(`/api/books/count/user?userId=${userId}`, setBookCount);
-        fetchJSON(`/api/friends/count?userId=${userId}`, setFriendCount);
-        fetchText(`/api/users/username?userId=${userId}`, setUsername);
+        fetch(`/api/locations/count?userId=${userId}`)
+            .then((res) => res.json())
+            .then((data) => setLocationCount(Number(data)))
+            .catch(console.error);
+
+        fetch(`/api/books/count/user?userId=${userId}`)
+            .then((res) => res.json())
+            .then((data) => setBookCount(Number(data)))
+            .catch(console.error);
+
+        fetch(`/api/friends/count?userId=${userId}`)
+            .then((res) => res.json())
+            .then((data) => setFriendCount(Number(data)))
+            .catch(console.error);
+
+        fetch(`/api/users?userId=${userId}`)
+            .then((res) => res.json())
+            .then((userData) => setUser(userData))
+            .catch(console.error);
     }, [userId]);
+
+    // Fetch cover images once user is loaded
+    useEffect(() => {
+        if (!thisUser) return;
+
+        const topIsbns = [
+            thisUser.topOne,
+            thisUser.topTwo,
+            thisUser.topThree,
+            thisUser.topFour,
+        ].filter(Boolean);
+
+        const coverPromises = topIsbns.map((isbn) =>
+                                               fetch(`/api/books/googlecover?isbn=${isbn}`)
+                                                   .then((res) => (res.ok ? res.text() : ""))
+                                                   .catch(() => "")
+                                                   .then((coverUrl) => ({ isbn, coverUrl }))
+        );
+
+        Promise.all(coverPromises)
+            .then((booksWithCovers) => setBooks(booksWithCovers))
+            .catch(console.error);
+    }, [thisUser]);
 
     const pluralize = (count, singular, plural) =>
         `${count} ${count === 1 ? singular : plural}`;
@@ -46,7 +64,7 @@ const Profile = () => {
                     <h1>PROFILE</h1>
                 </div>
                 <div className="username dm-mono-medium">
-                    <p>{username}</p>
+                    <p>{thisUser?.username}</p>
                 </div>
             </div>
             <div className="split">
@@ -55,7 +73,17 @@ const Profile = () => {
                     <p>{pluralize(locationCount, "location", "locations")}</p>
                     <p>{pluralize(friendCount, "friend", "friends")}</p>
                 </div>
-                <div className="profile-right"></div>
+                <div className="profile-right dm-mono-regular profile-right">
+                    {books.map((book) => (
+                        <div key={book.isbn} className="profile-book-item">
+                            {book.coverUrl ? (
+                                <img src={book.coverUrl} alt={book.isbn} className="book-cover" />
+                            ) : (
+                                 <p>{book.isbn}</p>
+                             )}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

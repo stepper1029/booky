@@ -1,7 +1,12 @@
 package com.example.stepperlibrary.service;
 
 import com.example.stepperlibrary.dao.FriendDao;
+import com.example.stepperlibrary.model.Friend;
+import com.example.stepperlibrary.model.User;
+
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class FriendService {
@@ -14,5 +19,9 @@ public class FriendService {
 
   public int countFriends(int userId) {
     return dao.countFriendsByUserId(userId);
+  }
+
+  public List<User> getFriends(Integer userId, String status) {
+    return dao.findFriendsByUserIdAndStatus(userId, status);
   }
 }

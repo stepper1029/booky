@@ -39,6 +39,10 @@ public class BookService {
     return dao.searchByLocationAndTitleOrAuthor(locationId, search);
   }
 
+  public List<Book> getBooksByUserId(Integer userId, String search) {
+    return dao.findByUserId(userId, search);
+  }
+
 
   /**
    * Adds a new book to the database.

@@ -19,6 +19,15 @@ public interface BookDao extends JpaRepository<Book, Long> {
   List<Book> findByLocationId(Integer locationId);
 
   @Query("""
+    SELECT b FROM Book b
+    WHERE b.userId = :userId AND
+          (LOWER(b.title) LIKE LOWER(CONCAT('%', :search, '%'))\s
+           OR LOWER(b.authorFirstName) LIKE LOWER(CONCAT('%', :search, '%'))\s
+           OR LOWER(b.authorLastName) LIKE LOWER(CONCAT('%', :search, '%')))
+""")
+  List<Book> findByUserId(@Param("userId") Integer userId, @Param("search") String search);
+
+  @Query("""
     SELECT b FROM Book b 
     WHERE b.locationId = :locationId AND 
           (LOWER(b.title) LIKE LOWER(CONCAT('%', :search, '%')) 
@@ -30,5 +39,3 @@ public interface BookDao extends JpaRepository<Book, Long> {
           @Param("search") String search
   );
 }
-
-

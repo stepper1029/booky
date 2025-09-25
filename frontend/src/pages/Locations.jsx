@@ -19,7 +19,7 @@ const Locations = () => {
                 setLocations(data);
 
                 if (data.length > 0) {
-                    setSelectedLocation(data[0]); // 👈 pick the first location
+                    setSelectedLocation(data[0]);
                 }
             })
             .catch((error) => console.error(error));
@@ -48,7 +48,7 @@ const Locations = () => {
             })
             .then((booksWithCovers) => setBooks(booksWithCovers))
             .catch(console.error);
-    }, [selectedLocation, searchQuery]); // ✅ re-run when query changes
+    }, [selectedLocation, searchQuery]);
 
 
 
@@ -87,7 +87,7 @@ const Locations = () => {
                 {/* Book grid */}
                 <div className="book-grid">
                     {books.map((book) => (
-                        <div key={book.id} className="book-item">
+                        <div key={book.isbn} className="book-item">
                             {book.coverUrl ? (
                                 <img src={book.coverUrl} alt={book.title} className="book-cover" />
                             ) : (

@@ -43,6 +43,13 @@ public class BookController {
     return bookService.getBooksByLocationId(locationId, search);
   }
 
+  @GetMapping("/books/user")
+  public List<Book> getBooksByUser(
+          @RequestParam Integer userId,
+          @RequestParam(required = false) String search) {
+    return bookService.getBooksByUserId(userId, search);
+  }
+
 
   @PostMapping("/books")
     public Book addBook(@RequestBody Book book) {

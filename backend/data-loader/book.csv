@@ -17,6 +17,6 @@ isbn,isbn10,locationid,userid,title,authorfirstname,authorlastname,blurb,dateadd
 9780060929787,60929782,1,1,Black Boy,Richard,Wright,lorem ipsum,2025-06-22
 9780593422946,593422945,1,1,The Heaven & Earth Grocery Store,James,McBride,lorem ipsum,2025-06-22
 9780812995343,812995341,1,1,Lincoln in the Bardo,George,Saunders,lorem ipsum,2025-06-22
-9780735224650,073522465X,1,1,The Searcher,Tana,French,lorem ipsum,2025-06-22
-9780593243398,593243390,1,1,Victory City,Salman,Rushdie,lorem ipsum,2025-06-22
-9780593318256,593318250,1,1,Wandering Stars,Tommy,Orange,lorem ipsum,2025-06-22
+9780735224650,073522465X,3,2,The Searcher,Tana,French,lorem ipsum,2025-06-22
+9780593243398,593243390,3,2,Victory City,Salman,Rushdie,lorem ipsum,2025-06-22
+9780593318256,593318250,3,2,Wandering Stars,Tommy,Orange,lorem ipsum,2025-06-22

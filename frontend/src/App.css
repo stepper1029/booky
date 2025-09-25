@@ -174,11 +174,10 @@ html, body {
 
 .split {
   display: flex;
-  justify-content: center;
 }
 
 .profile-left {
-  margin-top: 5rem;
+  margin: 5rem 0rem;
   flex: 1;
   line-height: 60px;
   font-size: xx-large;
@@ -189,6 +188,16 @@ html, body {
 
 .profile-right {
   flex: 1;
+  margin: 3rem 0;
+  justify-content: center;
+  align-items: center;
+  display: grid;
+  gap: 0rem 6rem;
+  grid-template-columns: repeat(2, auto);
+}
+
+.profile-book-item {
+  margin: 0 auto;
 }
 
 
