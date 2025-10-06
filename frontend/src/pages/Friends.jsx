@@ -1,52 +1,84 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const Friends = () => {
     const [friends, setFriends] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
     const [books, setBooks] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedBook, setSelectedBook] = useState(null);
+    const [cardStyle, setCardStyle] = useState({});
+    const sidebarRef = useRef();
     const userId = 1;
 
-    // Fetch friends on page load
+    // Fetch friends
     useEffect(() => {
         fetch(`/api/friends?userId=${userId}&status=accepted`)
-            .then(res => res.json())
-            .then(data => {
-            setFriends(data);
-
-            if (data.length > 0) {
-                setSelectedFriend(data[0]);
-            }
-        })
+            .then((res) => res.json())
+            .then((data) => {
+                setFriends(data);
+                if (data.length > 0) setSelectedFriend(data[0]);
+            })
             .catch(console.error);
     }, [userId]);
-
-
 
     // Fetch books whenever selectedFriend or searchQuery changes
     useEffect(() => {
         if (!selectedFriend) return;
 
-        // Build query params
         const params = new URLSearchParams({
                                                userId: selectedFriend.id,
-                                               search: searchQuery // send search term to backend
+                                               search: searchQuery,
                                            });
 
         fetch(`/api/books/user?${params.toString()}`)
             .then((res) => res.json())
             .then((data) => {
-                const coverPromises = data.map((book) =>
-                                                   fetch(`/api/books/googlecover?isbn=${book.isbn}`)
-                                                       .then((res) => res.ok ? res.text() : "")
-                                                       .catch(() => "")
-                                                       .then((coverUrl) => ({ ...book, coverUrl }))
-                );
+                const coverPromises = data.map(async (book) => {
+                    if (!book.isbn) return { ...book, coverUrl: "", description: "" };
+                    try {
+                        const googleRes = await fetch(
+                            `https://www.googleapis.com/books/v1/volumes?q=isbn:${encodeURIComponent(book.isbn)}`
+                        );
+                        const googleData = await googleRes.json();
+                        const volumeInfo = googleData.items?.[0]?.volumeInfo || {};
+                        const thumbnail = volumeInfo.imageLinks?.thumbnail || "";
+                        const description = volumeInfo.description || "No description available.";
+                        return { ...book, coverUrl: thumbnail, description };
+                    } catch (e) {
+                        console.error("Error fetching Google cover:", e);
+                        return { ...book, coverUrl: "", description: "No description available." };
+                    }
+                });
                 return Promise.all(coverPromises);
             })
             .then((booksWithCovers) => setBooks(booksWithCovers))
             .catch(console.error);
     }, [selectedFriend, searchQuery]);
+
+
+    const handleBookClick = (book) => {
+        if (!sidebarRef.current) return;
+
+        const sidebarRect = sidebarRef.current.getBoundingClientRect();
+
+        setCardStyle({
+                         top: sidebarRect.top + window.scrollY,       // align top with sidebar
+                         left: sidebarRect.left + window.scrollX,     // align left with sidebar
+                     });
+
+        setSelectedBook(book);
+    };
+
+    // Close info card if clicked outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!sidebarRef.current?.contains(e.target)) {
+                setSelectedBook(null);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
         <div className="app-container">
@@ -68,8 +100,8 @@ const Friends = () => {
 
             {/* Body */}
             <div className="page-body">
-                {/* Sidebar (friends list) */}
-                <div className="sidebar">
+                {/* Sidebar */}
+                <div className="sidebar" ref={sidebarRef}>
                     {friends.map((friend) => (
                         <p
                             key={friend.id}
@@ -80,27 +112,34 @@ const Friends = () => {
                         </p>
                     ))}
                 </div>
+
                 {/* Book grid */}
                 <div className="book-grid">
                     {books.map((book) => (
-                        <div key={book.id} className="book-item">
+                        <div
+                            key={book.id}
+                            className="book-item"
+                            onClick={() => handleBookClick(book)}
+                        >
                             {book.coverUrl ? (
-                                <img
-                                    src={book.coverUrl}
-                                    alt={book.title}
-                                    className="book-cover"
-                                />
+                                <img src={book.coverUrl} alt={book.title} className="book-cover" />
                             ) : (
                                  <div className="book-cover-placeholder">
-                                     <p className="book-title">
-                                         {book.title} by {book.authorFirstName}{" "}
-                                         {book.authorLastName}
-                                     </p>
+                                     <p className="book-title">{book.title} by {book.authorFirstName} {book.authorLastName}</p>
                                  </div>
                              )}
                         </div>
                     ))}
                 </div>
+
+                {/* Info card */}
+                {selectedBook && (
+                    <div className="info-card" style={cardStyle}>
+                        <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
+                        <h3 className="dm-mono-light-italic">{selectedBook.authorFirstName} {selectedBook.authorLastName}</h3>
+                        <p className="dm-mono-light">{selectedBook.description}</p>
+                    </div>
+                )}
             </div>
         </div>
     );

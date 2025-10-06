@@ -1,5 +1,6 @@
 package com.example.stepperlibrary.service;
 
+import com.example.stepperlibrary.dto.BookDto;
 import com.example.stepperlibrary.model.Book;
 import com.example.stepperlibrary.dao.BookDao;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,15 +9,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class BookService {
   private final BookDao dao;
   private final ObjectMapper objectMapper;
   private final RestTemplate restTemplate;
+  private static final String GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1/volumes?q=";
 
   public BookService(BookDao dao, ObjectMapper objectMapper) {
     this.dao = dao;
@@ -59,7 +65,7 @@ public class BookService {
 
   public String getGoogleBookCover(String isbn) {
     try {
-      String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + isbn;
+      String url = GOOGLE_BOOKS_API + "isbn:" + isbn;
       String response = restTemplate.getForObject(url, String.class);
 
       JsonNode root = objectMapper.readTree(response);
@@ -79,6 +85,5 @@ public class BookService {
     }
     return null; // fallback if no cover found
   }
-
 }
 

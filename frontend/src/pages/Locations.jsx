@@ -1,61 +1,90 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const Locations = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [books, setBooks] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
-
+    const [selectedBook, setSelectedBook] = useState(null);
+    const [cardStyle, setCardStyle] = useState({});
+    const sidebarRef = useRef();
     const userId = 1;
 
-    // Fetch locations on page load
+    // Fetch locations
     useEffect(() => {
         fetch(`/api/locations?userId=${userId}`)
-            .then((response) => {
-                if (!response.ok) throw new Error("Failed to fetch locations");
-                return response.json();
-            })
+            .then((res) => res.json())
             .then((data) => {
                 setLocations(data);
-
-                if (data.length > 0) {
-                    setSelectedLocation(data[0]);
-                }
+                if (data.length > 0) setSelectedLocation(data[0]);
             })
-            .catch((error) => console.error(error));
+            .catch(console.error);
     }, [userId]);
 
-    // Whenever selectedLocation  or query changes, fetch books for that location/query
+    // Fetch books and get description from Google Books
     useEffect(() => {
         if (!selectedLocation) return;
 
-        // Build query params
         const params = new URLSearchParams({
                                                locationId: selectedLocation.id,
-                                               search: searchQuery // send search term to backend
+                                               search: searchQuery,
                                            });
 
         fetch(`/api/books/location?${params.toString()}`)
             .then((res) => res.json())
             .then((data) => {
-                const coverPromises = data.map((book) =>
-                                                   fetch(`/api/books/googlecover?isbn=${book.isbn}`)
-                                                       .then((res) => res.ok ? res.text() : "")
-                                                       .catch(() => "")
-                                                       .then((coverUrl) => ({ ...book, coverUrl }))
-                );
-                return Promise.all(coverPromises);
+                const bookPromises = data.map(async (book) => {
+                    if (!book.isbn) return { ...book, coverUrl: "", description: "No description available." };
+
+                    try {
+                        const googleRes = await fetch(
+                            `https://www.googleapis.com/books/v1/volumes?q=isbn:${encodeURIComponent(book.isbn)}`
+                        );
+                        const googleData = await googleRes.json();
+                        const volumeInfo = googleData.items?.[0]?.volumeInfo || {};
+                        const thumbnail = volumeInfo.imageLinks?.thumbnail || "";
+                        const description = volumeInfo.description || "No description available.";
+                        return { ...book, coverUrl: thumbnail, description };
+                    } catch (e) {
+                        console.error("Error fetching Google data:", e);
+                        return { ...book, coverUrl: "", description: "No description available." };
+                    }
+                });
+
+                return Promise.all(bookPromises);
             })
-            .then((booksWithCovers) => setBooks(booksWithCovers))
+            .then((booksWithData) => setBooks(booksWithData))
             .catch(console.error);
     }, [selectedLocation, searchQuery]);
 
+    const handleBookClick = (book) => {
+        if (!sidebarRef.current) return;
+        const sidebarRect = sidebarRef.current.getBoundingClientRect();
 
+        setCardStyle({
+                         top: sidebarRect.top + window.scrollY,
+                         left: sidebarRect.left + window.scrollX,
+                     });
+
+        setSelectedBook(book);
+    };
+
+    // Close info card when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!sidebarRef.current?.contains(e.target)) {
+                setSelectedBook(null);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
         <div className="app-container">
-            <div className="page-header dm-mono-regular-italic">
-                <div className="page-title">
+            {/* Header */}
+            <div className="page-header">
+                <div className="page-title dm-mono-regular-italic">
                     <h1>LOCATIONS</h1>
                 </div>
                 <div className="header-search">
@@ -67,16 +96,16 @@ const Locations = () => {
                         className="search-input dm-mono-regular-italic"
                     />
                 </div>
-
             </div>
 
+            {/* Body */}
             <div className="page-body">
                 {/* Sidebar */}
-                <div className="sidebar">
+                <div className="sidebar" ref={sidebarRef}>
                     {locations.map((loc) => (
                         <p
                             key={loc.id}
-                            className={selectedLocation?.id === loc.id ? 'active-location' : ''}
+                            className={selectedLocation?.id === loc.id ? "active-location" : ""}
                             onClick={() => setSelectedLocation(loc)}
                         >
                             {loc.name}
@@ -87,17 +116,34 @@ const Locations = () => {
                 {/* Book grid */}
                 <div className="book-grid">
                     {books.map((book) => (
-                        <div key={book.isbn} className="book-item">
+                        <div
+                            key={book.id}
+                            className="book-item"
+                            onClick={() => handleBookClick(book)}
+                        >
                             {book.coverUrl ? (
                                 <img src={book.coverUrl} alt={book.title} className="book-cover" />
                             ) : (
                                  <div className="book-cover-placeholder">
-                                     <p className="book-title">{book.title} by {book.authorFirstName} {book.authorLastName}</p>
+                                     <p className="book-title">
+                                         {book.title} by {book.authorFirstName} {book.authorLastName}
+                                     </p>
                                  </div>
                              )}
                         </div>
                     ))}
                 </div>
+
+                {/* Info card */}
+                {selectedBook && (
+                    <div className="info-card" style={cardStyle}>
+                        <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
+                        <h3 className="dm-mono-light-italic">
+                            {selectedBook.authorFirstName} {selectedBook.authorLastName}
+                        </h3>
+                        <p className="dm-mono-light">{selectedBook.description}</p>
+                    </div>
+                )}
             </div>
         </div>
     );
