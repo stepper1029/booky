@@ -25,9 +25,9 @@ Booky is a full-stack web application for cataloging, sharing, and reviewing boo
 
 ## Project Structure
 
-/backend has directories
-  /server which holds backend business logic and daos
-  /data-loader which holds init data and shell scripts
+/backend has directories  
+   - /server which holds backend business logic and daos  
+   - /data-loader which holds init data and shell scripts  
 
 /frontend holds react code and frontend logic
 
