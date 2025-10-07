@@ -23,6 +23,16 @@ Booky is a full-stack web application for cataloging, sharing, and reviewing boo
 
 ---
 
+## Project Structure
+
+/backend has directories
+  /server which holds backend business logic and daos
+  /data-loader which holds init data and shell scripts
+
+/frontend holds react code and frontend logic
+
+---
+
 ## Getting Started
 
 Follow these steps to set up and run the Booky application locally:
@@ -39,13 +49,3 @@ Follow these steps to set up and run the Booky application locally:
 
 4. Start the frontend from the frontend directory:
    npm start
-
----
-
-## Project Structure
-
-/backend has directories
-  /server which holds backend business logic and daos
-  /data-loader which holds init data and shell scripts
-
-/frontend holds react code and frontend logic
