@@ -6,20 +6,27 @@ const Browse = () => {
     const [books, setBooks] = useState([]);
     const [selectedBook, setSelectedBook] = useState(null);
     const [cardStyle, setCardStyle] = useState({});
-    const [showForm, setShowForm] = useState(false); // NEW
-    const [topLocation, setTopLocation] = useState("");
+    const [showForm, setShowForm] = useState(false);
+    const [topLocation, setTopLocation] = useState()
+    const [locations, setLocations] = useState([]);
+
 
     const gridRef = useRef();
     const buttonRef = useRef();
+    const infoCardRef = useRef();
     const MAX_RESULTS = 40;
 
-    // Fetch top location for current user (example userId=1)
     useEffect(() => {
-        fetch(`/api/users/1/top-location`)
+        fetch(`/api/locations?userId=1`)
             .then((res) => res.json())
-            .then((data) => setTopLocation(data.location || ""))
+            .then((data) => {
+                // data is an array of objects: [{id, name, userId}, ...]
+                setLocations(data);
+                setTopLocation(data?.[0]?.name || ""); // default to first location name
+            })
             .catch(console.error);
     }, []);
+
 
     const handleSearch = async (e) => {
         if (e.key === "Enter" && searchQuery.trim()) {
@@ -80,7 +87,10 @@ const Browse = () => {
     // Close info card if clicked outside
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (!gridRef.current?.contains(e.target) && !buttonRef.current?.contains(e.target)) {
+            if (
+                !gridRef.current?.contains(e.target) &&
+                !infoCardRef.current?.contains(e.target)
+            ) {
                 setSelectedBook(null);
                 setShowForm(false);
             }
@@ -88,6 +98,50 @@ const Browse = () => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const handleAddBook = async (e) => {
+        e.preventDefault();
+        if (!selectedBook) return;
+
+        const formData = new FormData(e.target);
+        const locationName = formData.get("location");
+        const boughtOn = formData.get("boughtOn");
+
+        // Find the location object so we can get its ID
+        const locationObj = locations.find(loc => loc.name === locationName);
+        if (!locationObj) {
+            alert("Invalid location selected.");
+            return;
+        }
+
+        const payload = {
+            isbn: selectedBook.isbn13,
+            title: selectedBook.title,
+            authorFirstName: selectedBook.authors?.[0] || "",
+            authorLastName: selectedBook.authors?.[1] || "",
+            locationId: locationObj.id,
+            userId: 1,
+            dateAdded: new Date().toISOString().split("T")[0],
+            blurb: selectedBook.description,
+        };
+
+        try {
+            const res = await fetch("/api/books", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error("Failed to add book");
+
+            const savedBook = await res.json();
+            setShowForm(false);
+        } catch (err) {
+            console.error(err);
+            alert("Error adding book. Try again.");
+        }
+    };
+
 
     return (
         <div className="app-container">
@@ -127,7 +181,7 @@ const Browse = () => {
                 </div>
 
                 {selectedBook && (
-                    <div className="browse-info-card" style={cardStyle}>
+                    <div className="browse-info-card" style={cardStyle} ref={infoCardRef}>
                         <div className="info-card-content">
                             <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
                             <h3 className="dm-mono-light-italic">
@@ -139,36 +193,40 @@ const Browse = () => {
                                 <p className="dm-mono-light">{selectedBook.description}</p>
                             ) : (
                                  // Show form instead of description
-                                 <form className="add-form">
-                                     <input
-                                         type="text"
-                                         placeholder="Location"
-                                         defaultValue={topLocation}
-                                     />
-                                     <input
-                                         type="date"
-                                         placeholder="Bought on"
-                                         defaultValue={new Date().toISOString().split("T")[0]}
-                                     />
-                                     <button type="submit" className="form-save-btn">
-                                         Save
-                                     </button>
-                                 </form>
+                                <form className="add-form" onSubmit={handleAddBook}>
+                                    <select name="location" defaultValue={topLocation}>
+                                        {locations.map(loc => (
+                                            <option key={loc.id} value={loc.name}>{loc.name}</option>
+                                        ))}
+                                    </select>
+
+                                    <input
+                                        type="date"
+                                        name="boughtOn"
+                                        defaultValue={new Date().toISOString().split("T")[0]}
+                                    />
+
+                                    <button
+                                        type="submit"
+                                        className="form-save-btn"
+                                    >
+                                        SAVE
+                                    </button>
+
+                                </form>
                              )}
                         </div>
-
-                        <div className="info-card-footer">
-                            <div className="tags">
-                                {selectedBook.categories.length > 0 ? (
-                                    selectedBook.categories.map((cat, i) => (
-                                        <span key={i} className="tag">{cat}</span>
-                                    ))
-                                ) : (
-                                     <span className="tag">Uncategorized</span>
-                                 )}
-                            </div>
-
-                            {!showForm && (
+                        {!showForm && (
+                            <div className="info-card-footer">
+                                <div className="tags">
+                                    {selectedBook.categories.length > 0 ? (
+                                        selectedBook.categories.map((cat, i) => (
+                                            <span key={i} className="tag">{cat}</span>
+                                        ))
+                                    ) : (
+                                         <span className="tag">Uncategorized</span>
+                                    )}
+                                </div>
                                 <button
                                     className="info-card-button dm-mono-medium"
                                     onClick={() => setShowForm(true)}
@@ -176,8 +234,8 @@ const Browse = () => {
                                 >
                                     ADD TO LIBRARY
                                 </button>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

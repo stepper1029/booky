@@ -59,14 +59,5 @@ public class BookController {
       return bookService.addBook(book);
     }
 
-
-    // GOOGLE BOOKS APIS
-
-  @GetMapping("/googlecover")
-  public String getGoogleBookCover(@RequestParam String isbn) {
-    String coverUrl = bookService.getGoogleBookCover(isbn);
-    return coverUrl != null ? coverUrl : "";
-  }
-
 }
 
