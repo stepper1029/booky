@@ -23,7 +23,7 @@ docker exec -i $CONTAINER_NAME \
 # Books
 docker exec -i $CONTAINER_NAME \
   psql -U $DB_USER -d $DB_NAME \
-  -c "\copy book(isbn, isbn10, locationid, userid, title, authorfirstname, authorlastname, blurb, dateadded) FROM STDIN CSV HEADER" < "$CSV_DIR/book.csv"
+  -c "\copy book(isbn, isbn10, locationid, userid, title, author, dateadded) FROM STDIN CSV HEADER" < "$CSV_DIR/book.csv"
 
 # Friends
 docker exec -i $CONTAINER_NAME \

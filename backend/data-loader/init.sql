@@ -27,15 +27,14 @@ CREATE TABLE IF NOT EXISTS location (
 );
 
 CREATE TABLE IF NOT EXISTS book (
-                                    isbn TEXT PRIMARY KEY,
+                                    id SERIAL PRIMARY KEY,
+                                    isbn TEXT NOT NULL,
                                     isbn10 TEXT,
-                                    locationid INT,
-                                    userid INT,
-                                    title TEXT,
-                                    authorfirstname TEXT,
-                                    authorlastname TEXT,
-                                    blurb TEXT,
-                                    dateadded DATE
+                                    locationid INT REFERENCES location(id),
+                                    userid INT REFERENCES users(id) NOT NULL,
+                                    title TEXT NOT NULL,
+                                    author TEXT NOT NULL,
+                                    dateadded DATE DEFAULT CURRENT_DATE
 );
 
 -- Friends table

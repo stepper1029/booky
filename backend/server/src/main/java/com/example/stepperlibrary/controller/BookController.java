@@ -1,6 +1,7 @@
 package com.example.stepperlibrary.controller;
 
 import com.example.stepperlibrary.dto.BookDto;
+import com.example.stepperlibrary.dto.BookOwnersDto;
 import com.example.stepperlibrary.model.Book;
 import com.example.stepperlibrary.service.BookService;
 
@@ -51,6 +52,11 @@ public class BookController {
           @RequestParam Integer userId,
           @RequestParam(required = false) String search) {
     return bookService.getBooksByUserId(userId, search);
+  }
+
+  @GetMapping("/owners")
+  public BookOwnersDto getBookOwners(@RequestParam String isbn) {
+    return bookService.getOwnersByIsbn(isbn);
   }
 
 

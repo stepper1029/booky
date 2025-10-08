@@ -21,9 +21,8 @@ public interface BookDao extends JpaRepository<Book, Long> {
   @Query("""
     SELECT b FROM Book b
     WHERE b.userId = :userId AND
-          (LOWER(b.title) LIKE LOWER(CONCAT('%', :search, '%'))\s
-           OR LOWER(b.authorFirstName) LIKE LOWER(CONCAT('%', :search, '%'))\s
-           OR LOWER(b.authorLastName) LIKE LOWER(CONCAT('%', :search, '%')))
+          (LOWER(b.title) LIKE LOWER(CONCAT('%', :search, '%'))
+           OR LOWER(b.author) LIKE LOWER(CONCAT('%', :search, '%')))
 """)
   List<Book> findByUserId(@Param("userId") Integer userId, @Param("search") String search);
 
@@ -31,11 +30,20 @@ public interface BookDao extends JpaRepository<Book, Long> {
     SELECT b FROM Book b 
     WHERE b.locationId = :locationId AND 
           (LOWER(b.title) LIKE LOWER(CONCAT('%', :search, '%')) 
-           OR LOWER(b.authorFirstName) LIKE LOWER(CONCAT('%', :search, '%')) 
-           OR LOWER(b.authorLastName) LIKE LOWER(CONCAT('%', :search, '%')))
+           OR LOWER(b.author) LIKE LOWER(CONCAT('%', :search, '%')))
 """)
   List<Book> searchByLocationAndTitleOrAuthor(
           @Param("locationId") Integer locationId,
           @Param("search") String search
   );
+
+  @Query("""
+        SELECT u.username, l.name
+        FROM Book b
+        JOIN User u ON b.userId = u.id
+        LEFT JOIN Location l ON b.locationId = l.id
+        WHERE b.isbn = :isbn
+    """
+  )
+  List<Object[]> findOwnersByIsbn(@Param("isbn") String isbn);
 }

@@ -3,54 +3,25 @@ package com.example.stepperlibrary.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookDto {
+public class BookOwnersDto {
   private String isbn;
-  private String title;
-  private String author;
-  private String blurb;
   private List<OwnerDTO> owners = new ArrayList<>();
 
-  public BookDto() {}
+  public BookOwnersDto() {}
 
-  public BookDto(String isbn, String title, String author, String blurb) {
+  public BookOwnersDto(String isbn) {
     this.isbn = isbn;
-    this.title = title;
-    this.author = author;
-    this.blurb = blurb;
   }
 
-  // Add an owner
   public void addOwner(String username, String location) {
-    this.owners.add(new OwnerDTO(username, location));
+    owners.add(new OwnerDTO(username, location));
   }
 
-  // Getters and setters
   public String getIsbn() {
     return isbn;
   }
   public void setIsbn(String isbn) {
     this.isbn = isbn;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getAuthor() {
-    return author;
-  }
-  public void setAuthor(String author) {
-    this.author = author;
-  }
-
-  public String getBlurb() {
-    return blurb;
-  }
-  public void setBlurb(String blurb) {
-    this.blurb = blurb;
   }
 
   public List<OwnerDTO> getOwners() {
@@ -60,7 +31,6 @@ public class BookDto {
     this.owners = owners;
   }
 
-  // Inner static class to represent an owner
   public static class OwnerDTO {
     private String username;
     private String location;
@@ -72,7 +42,6 @@ public class BookDto {
       this.location = location;
     }
 
-    // Getters and setters
     public String getUsername() {
       return username;
     }

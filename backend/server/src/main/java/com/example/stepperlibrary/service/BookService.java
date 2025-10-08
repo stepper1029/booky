@@ -1,33 +1,23 @@
 package com.example.stepperlibrary.service;
 
-import com.example.stepperlibrary.dto.BookDto;
+import com.example.stepperlibrary.dto.BookOwnersDto;
 import com.example.stepperlibrary.model.Book;
 import com.example.stepperlibrary.dao.BookDao;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class BookService {
-  private final BookDao dao;
-  private final ObjectMapper objectMapper;
-  private final RestTemplate restTemplate;
-  private static final String GOOGLE_BOOKS_API = "https://www.googleapis.com/books/v1/volumes?q=";
 
-  public BookService(BookDao dao, ObjectMapper objectMapper) {
+  private static final Logger log = LoggerFactory.getLogger(LocationService.class);
+  private final BookDao dao;
+
+  public BookService(BookDao dao) {
     this.dao = dao;
-    this.objectMapper = objectMapper;
-    this.restTemplate = new RestTemplate();
   }
 
   public int countAllByUserId(int userId) {
@@ -49,6 +39,24 @@ public class BookService {
     return dao.findByUserId(userId, search);
   }
 
+  public BookOwnersDto getOwnersByIsbn(String isbn) {
+    List<Object[]> results = dao.findOwnersByIsbn(isbn);
+    BookOwnersDto dto = new BookOwnersDto(isbn);
+
+    log.info("Fetching owners for isbn: {}", isbn);
+
+    for (Object[] row : results) {
+      String username = (String) row[0];
+      String location = (String) row[1];
+      if (username != null && location != null) {
+        dto.addOwner(username, location);
+        log.info("Username: {}, location: {}", username, location);
+      }
+    }
+
+    return dto;
+  }
+
 
   /**
    * Adds a new book to the database.
@@ -61,29 +69,6 @@ public class BookService {
   }
 
 
-  // GOOGLE BOOKS
 
-  public String getGoogleBookCover(String isbn) {
-    try {
-      String url = GOOGLE_BOOKS_API + "isbn:" + isbn;
-      String response = restTemplate.getForObject(url, String.class);
-
-      JsonNode root = objectMapper.readTree(response);
-      JsonNode items = root.path("items");
-
-      if (items.isArray() && items.size() > 0) {
-        JsonNode volumeInfo = items.get(0).path("volumeInfo");
-        JsonNode imageLinks = volumeInfo.path("imageLinks");
-        JsonNode thumbnail = imageLinks.path("thumbnail");
-
-        if (!thumbnail.isMissingNode()) {
-          return thumbnail.asText();
-        }
-      }
-    } catch (Exception e) {
-      System.err.println("Error fetching Google Books cover: " + e.getMessage());
-    }
-    return null; // fallback if no cover found
-  }
 }
 
