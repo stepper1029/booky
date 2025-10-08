@@ -41,6 +41,11 @@ public class LocationController {
     return locationService.getLocationsByUserId(userId);
   }
 
+  @GetMapping("/name")
+  public String getLocationName(@RequestParam Integer locationId){
+    return locationService.getLocationName(locationId);
+  }
+
   /**
    * Add a new location for a user
    */

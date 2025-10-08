@@ -227,11 +227,9 @@ const Browse = () => {
                                     ) : (
                                          <span className="tag">Uncategorized</span>
                                      )}
-
                                     {/* Owners tags */}
                                     {owners.map((owner, i) => (
-                                        <span key={`owner-${i}`} style={{ border: '1px solid red', padding: '2px', marginRight: '4px' }}>
-    {owner.username} - {owner.location}
+                                        <span key={`owner-${i}`} className="owner-tag"> {owner.username} - {owner.location}
 </span>
 
                                     ))}

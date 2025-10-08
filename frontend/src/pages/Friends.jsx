@@ -6,6 +6,7 @@ const Friends = () => {
     const [books, setBooks] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedBook, setSelectedBook] = useState(null);
+    const [selectedBookLocation, setSelectedBookLocation] = useState(null);
     const [cardStyle, setCardStyle] = useState({});
     const sidebarRef = useRef();
     const userId = 1;
@@ -56,7 +57,7 @@ const Friends = () => {
     }, [selectedFriend, searchQuery]);
 
 
-    const handleBookClick = (book) => {
+    const handleBookClick = async (book) => {
         if (!sidebarRef.current) return;
 
         const sidebarRect = sidebarRef.current.getBoundingClientRect();
@@ -67,6 +68,19 @@ const Friends = () => {
                      });
 
         setSelectedBook(book);
+        setSelectedBookLocation(null); // reset while fetching
+
+        // Fetch location name by ID
+        if (book.locationId) {
+            try {
+                const res = await fetch(`/api/locations/name?locationId=${book.locationId}`);
+                if (!res.ok) throw new Error("Failed to fetch location");
+                const locationName = await res.text(); // use text() instead of json()
+                setSelectedBookLocation(locationName);
+            } catch (err) {
+                console.error(err);
+            }
+        }
     };
 
     // Close info card if clicked outside
@@ -125,7 +139,7 @@ const Friends = () => {
                                 <img src={book.coverUrl} alt={book.title} className="book-cover" />
                             ) : (
                                  <div className="book-cover-placeholder">
-                                     <p className="book-title">{book.title} by {book.authorFirstName} {book.authorLastName}</p>
+                                     <p className="book-title">{book.title} by {book.author}</p>
                                  </div>
                              )}
                         </div>
@@ -135,9 +149,17 @@ const Friends = () => {
                 {/* Info card */}
                 {selectedBook && (
                     <div className="info-card" style={cardStyle}>
-                        <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
-                        <h3 className="dm-mono-light-italic">{selectedBook.authorFirstName} {selectedBook.authorLastName}</h3>
-                        <p className="dm-mono-light">{selectedBook.description}</p>
+                            <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
+                            <h3 className="dm-mono-light-italic">
+                                {selectedBook.author}
+                            </h3>
+                            <p className="dm-mono-light">{selectedBook.description}</p>
+
+                            {selectedBook.locationId && (
+                                <div className="owner-tag-wrapper">
+                                    <span className="owner-tag">{selectedBookLocation}</span>
+                                </div>
+                            )}
                     </div>
                 )}
             </div>

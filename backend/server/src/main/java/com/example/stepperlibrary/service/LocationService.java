@@ -37,6 +37,11 @@ public class LocationService {
     return locationDao.countByUserId(userId);
   }
 
+  public String getLocationName(Integer locationId){
+    log.info("getting location name for locationid: {}", locationId);
+    return locationDao.getLocationName(locationId);
+  }
+
   /**
    * Add a new location
    */

@@ -236,8 +236,9 @@ html, body {
 
 .info-card-button {
   padding: 6px 12px;
+  background: #CD1C18;
+  color: #F5F5F3;
   border: 2px solid #CD1C18;
-  color: #CD1C18;
   cursor: pointer;
   border-radius: 8px;
   font-size: medium;
@@ -250,6 +251,23 @@ html, body {
 
 .tag {
   background: #28282A20;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: small;
+  color: #28282A;
+}
+
+.owner-tag-wrapper{
+  z-index: 1;
+  padding-bottom: 1rem;
+  padding-top: .25rem;
+  justify-content: space-between;
+  align-items: center;
+  overflow: auto;
+}
+
+.owner-tag {
+  background: #CD1C1820;
   border-radius: 8px;
   padding: 8px 10px;
   font-size: small;
@@ -331,7 +349,8 @@ html, body {
 
 .info-card p {
   font-size: medium;
-  margin: 2rem 0;
+  margin-top: 2rem;
+  margin-bottom: .5rem;
 }
 
 .book-item {

@@ -36,6 +36,11 @@ public class BookService {
   }
 
   public List<Book> getBooksByUserId(Integer userId, String search) {
+    log.info("Fetching books for user: {}", userId);
+    List<Book> list = dao.findByUserId(userId, search);
+    for(Book b : list){
+      log.info(b.getTitle() + " by " + b.getAuthor() + " at " + b.getLocationId());
+    }
     return dao.findByUserId(userId, search);
   }
 
