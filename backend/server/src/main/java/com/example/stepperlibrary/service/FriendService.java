@@ -24,4 +24,8 @@ public class FriendService {
   public List<User> getFriends(Integer userId, String status) {
     return dao.findFriendsByUserIdAndStatus(userId, status);
   }
+
+  public boolean areFriends(Integer user1Id, Integer user2Id) {
+    return dao.areFriends(user1Id, user2Id);
+  }
 }

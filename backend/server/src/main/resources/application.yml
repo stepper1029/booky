@@ -28,3 +28,6 @@ server:
 logging:
     level:
         com.example.stepperlibrary: DEBUG
+
+jwt:
+    secret: "R2nd73nksq0r9d0FJw8WZl5t4yE3uPf1sA2xH9vB7cT6mN0Q"

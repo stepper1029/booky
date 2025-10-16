@@ -13,7 +13,7 @@ echo "📥 Loading CSV data into $DB_NAME..."
 # Users
 docker exec -i $CONTAINER_NAME \
   psql -U $DB_USER -d $DB_NAME \
-  -c "\copy users(id, username, fullname, bio, joindate, topone, toptwo, topthree, topfour) FROM STDIN CSV HEADER" < "$CSV_DIR/user.csv"
+  -c "\copy users(id, username, password, fullname, bio, joindate, topone, toptwo, topthree, topfour) FROM STDIN CSV HEADER" < "$CSV_DIR/user.csv"
 
 # Locations
 docker exec -i $CONTAINER_NAME \

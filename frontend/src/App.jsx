@@ -5,24 +5,24 @@ import BrowsePage from "./pages/Browse";
 import LocationsPage from "./pages/Locations";
 import FriendsPage from "./pages/Friends";
 import ProfilePage from "./pages/Profile";
+import LoginPage from "./pages/Login";
+import { AuthProvider } from "./AuthContext";
 
 function App() {
     return (
-        <div className="app-container">
-        <Router>
-            <Nav />
-            <Routes>
-                {/* Default redirect to /browse */}
-                <Route path="/" element={<Navigate to="/browse" />} />
-
-                {/* Routes for each page */}
-                <Route path="/browse" element={<BrowsePage />} />
-                <Route path="/locations" element={<LocationsPage />} />
-                <Route path="/friends" element={<FriendsPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
-        </Router>
-        </div>
+        <AuthProvider>
+            <Router>
+                <Nav />
+                <Routes>
+                    <Route path="/" element={<Navigate to="/login" />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/browse" element={<BrowsePage />} />
+                    <Route path="/locations" element={<LocationsPage />} />
+                    <Route path="/friends" element={<FriendsPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
     );
 }
 

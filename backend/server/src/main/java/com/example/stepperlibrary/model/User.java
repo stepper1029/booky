@@ -16,6 +16,9 @@ public class User {
   private String username;
 
   @Column(nullable = false)
+  private String password;
+
+  @Column(nullable = false)
   private String fullname;
 
   @Column(columnDefinition = "TEXT")
@@ -41,8 +44,9 @@ public class User {
   // Constructors
   public User() {}
 
-  public User(String username, String fullname, LocalDate joinDate) {
+  public User(String username, String fullname, String password, LocalDate joinDate) {
     this.username = username;
+    this.password = password;
     this.fullname = fullname;
     this.joinDate = joinDate;
   }
@@ -62,6 +66,14 @@ public class User {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public String getFullname() {

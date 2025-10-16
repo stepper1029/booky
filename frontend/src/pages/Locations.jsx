@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import {useAuth} from "../AuthContext";
 
 const Locations = () => {
     const [locations, setLocations] = useState([]);
@@ -8,18 +9,43 @@ const Locations = () => {
     const [selectedBook, setSelectedBook] = useState(null);
     const [cardStyle, setCardStyle] = useState({});
     const sidebarRef = useRef();
-    const userId = 1;
+    const [userId, setUserId] = useState(null);
+    const { user } = useAuth();
+
+    useEffect(() => {
+        if (!user?.username || !user?.token) return;
+
+        const fetchUser = async () => {
+            try {
+                const res = await fetch(
+                    `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
+                    {
+                        headers: { Authorization: `Bearer ${user.token}` },
+                    }
+                );
+                if (!res.ok) throw new Error("Failed to fetch user");
+                const data = await res.json();
+                setUserId(data.id);
+            } catch (err) {
+                console.error("Error fetching user:", err);
+            }
+        };
+
+        fetchUser();
+    }, [user]);
 
     // Fetch locations
     useEffect(() => {
-        fetch(`/api/locations?userId=${userId}`)
+        fetch(`/api/locations?userId=${userId}`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+        })
             .then((res) => res.json())
             .then((data) => {
                 setLocations(data);
                 if (data.length > 0) setSelectedLocation(data[0]);
             })
             .catch(console.error);
-    }, [userId]);
+    }, [userId, user.token]);
 
     // Fetch books and get description from Google Books
     useEffect(() => {
@@ -30,7 +56,9 @@ const Locations = () => {
                                                search: searchQuery,
                                            });
 
-        fetch(`/api/books/location?${params.toString()}`)
+        fetch(`/api/books/location?${params.toString()}`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+        })
             .then((res) => res.json())
             .then((data) => {
                 const bookPromises = data.map(async (book) => {
@@ -55,7 +83,7 @@ const Locations = () => {
             })
             .then((booksWithData) => setBooks(booksWithData))
             .catch(console.error);
-    }, [selectedLocation, searchQuery]);
+    }, [selectedLocation, searchQuery, user.token]);
 
     const handleBookClick = (book) => {
         if (!sidebarRef.current) return;

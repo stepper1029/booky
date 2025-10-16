@@ -28,4 +28,9 @@ public class FriendController {
                                @RequestParam String status) {
     return friendService.getFriends(userId, status);
   }
+
+  @GetMapping("/checkFriendship")
+  public boolean areFriends(@RequestParam Integer user1Id, @RequestParam Integer user2Id) {
+    return friendService.areFriends(user1Id, user2Id);
+  }
 }

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +21,13 @@ public class BookController {
 
   private static final Logger log = LoggerFactory.getLogger(BookController.class);
   private final BookService bookService;
+  private final FriendController friendController;
+  private final UserController userController;
 
-  public BookController(BookService bookService) {
+  public BookController(BookService bookService, FriendController friendController, UserController userController) {
     this.bookService = bookService;
+    this.friendController = friendController;
+    this.userController = userController;
   }
 
     // ----------------------
@@ -48,10 +53,33 @@ public class BookController {
   }
 
   @GetMapping("/user")
-  public List<Book> getBooksByUser(
+  public ResponseEntity<?> getBooksByUser(
           @RequestParam Integer userId,
-          @RequestParam(required = false) String search) {
-    return bookService.getBooksByUserId(userId, search);
+          @RequestParam(required = false) String search,
+          Authentication authentication) {
+
+    // Extract logged-in username from JWT
+    String loggedInUsername = (String) authentication.getPrincipal();
+
+    // Lookup logged-in user ID
+    Integer loggedInUserId = userController.getUserByUsername(loggedInUsername).get().getId();
+    if (loggedInUserId == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+              .body("Invalid JWT user");
+    }
+
+    // Check if logged-in user is allowed to view requested user's books
+    boolean allowed = loggedInUserId.equals(userId) ||
+            friendController.areFriends(loggedInUserId, userId);
+
+    if (!allowed) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+              .body("You are not allowed to view this user's books");
+    }
+
+    // Fetch books (with optional search filter)
+    List<Book> books = bookService.getBooksByUserId(userId, search);
+    return ResponseEntity.ok(books);
   }
 
   @GetMapping("/owners")

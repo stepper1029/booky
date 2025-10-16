@@ -25,4 +25,13 @@ public interface FriendDao extends JpaRepository<Friend, Integer> {
         """)
   List<User> findFriendsByUserIdAndStatus(@Param("userId") Integer userId,
                                           @Param("status") String status);
+
+  @Query("""
+        SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END
+        FROM Friend f
+        WHERE f.status = 'accepted'
+          AND ((f.user1Id = :user1Id AND f.user2Id = :user2Id)
+               OR (f.user1Id = :user2Id AND f.user2Id = :user1Id))
+    """)
+  boolean areFriends(@Param("user1Id") Integer user1Id, @Param("user2Id") Integer user2Id);
 }

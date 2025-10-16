@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
                                       id SERIAL PRIMARY KEY,
                                       username TEXT,
                                       fullname TEXT,
+                                      password TEXT,
                                       bio TEXT,
                                       joindate DATE,
                                       topone TEXT,

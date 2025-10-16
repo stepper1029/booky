@@ -1,4 +1,4 @@
-id,username,fullname,bio,joindate,topone,toptwo,topthree,topfour
-1,emily.brill,Emily Stepper,big sissy ,9/16/2025,9780385334143,9780140187410,9780316769020,9780593230251
-2,livy.brill,Olivia Stepper,cool and awesome,9/16/2025,9780143039976,9780811231947,9780374529949,9780571379149
-3,averydem,Avery Demetres,something something kpop,9/16/2025,9780063070707,9780571379149,9780593536322,9781982150921
+id,username,password,fullname,bio,joindate,topone,toptwo,topthree,topfour
+1,emily.brill,$2a$12$BIQb3kL8QRgmDciRkq3PXeckBVSJfrV3.e4V9gcADU7zHe11uQUfW,Emily Stepper,big sissy ,9/16/2025,9780385334143,9780140187410,9780316769020,9780593230251
+2,livy.brill,$2a$12$BIQb3kL8QRgmDciRkq3PXeckBVSJfrV3.e4V9gcADU7zHe11uQUfW,Olivia Stepper,cool and awesome,9/16/2025,9780143039976,9780811231947,9780374529949,9780571379149
+3,averydem,$2a$12$BIQb3kL8QRgmDciRkq3PXeckBVSJfrV3.e4V9gcADU7zHe11uQUfW,Avery Demetres,something something kpop,9/16/2025,9780063070707,9780571379149,9780593536322,9781982150921
