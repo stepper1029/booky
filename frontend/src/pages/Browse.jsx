@@ -23,7 +23,6 @@ const Browse = () => {
     useEffect(() => {
         const fetchUser = async () => {
             if (!user?.username || !user?.token) return;
-            console.log(user.token);
             try {
                 const res = await fetch(
                     `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
@@ -67,7 +66,7 @@ const Browse = () => {
         };
 
         fetchLocations();
-    }, [userId, user.token]);
+    }, [userId, user?.token]);
 
     const handleSearch = async (e) => {
         if (e.key === "Enter" && searchQuery.trim()) {

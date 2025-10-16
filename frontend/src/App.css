@@ -387,11 +387,25 @@ html, body {
 /********************* PROFILE STYLING ****************************/
 /******************************************************************/
 
+.profile-container{
+  position: relative;
+  display:flex;
+  flex-direction: column;
+  height: 90vh;
+}
+
 .profile-header{
   display: flex;
+  flex: .5;
   align-items: baseline;
   color: #28282A;
   letter-spacing: 0.5rem;
+}
+
+.bio {
+  font-size: medium;
+  letter-spacing: normal;
+  margin: 0 5rem;
 }
 
 .username{
@@ -404,12 +418,14 @@ html, body {
 
 .split {
   display: flex;
+  height: 50vh;
+  margin-top: 0;
 }
 
 .profile-left {
-  margin: 5rem 0rem;
+  margin: 4rem 0rem 5rem 0;
   flex: 1;
-  line-height: 60px;
+  line-height: 45px;
   font-size: xx-large;
   text-align: center;
   align-items: center;
@@ -428,6 +444,22 @@ html, body {
 
 .profile-book-item {
   margin: 0 auto;
+}
+
+.signout-button {
+  flex: 2;
+  padding: 6px 12px;
+  border: 2px solid #28282A40;
+  border-radius: 8px;
+  color: #28282A40;
+  font-size: medium;
+  cursor: pointer;
+  font-family: "DM Mono", monospace;
+  margin: 1rem;
+  width: 10rem;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 /******************************************************************/
