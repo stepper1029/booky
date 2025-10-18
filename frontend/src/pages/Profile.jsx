@@ -11,6 +11,7 @@ const Profile = () => {
     const [bookCount, setBookCount] = useState(0);
     const [friendCount, setFriendCount] = useState(0);
     const [books, setBooks] = useState([]);
+    const [bio, setBio] = useState("");
 
     useEffect(() => {
         if (!user?.username || !user?.token) return;
@@ -83,7 +84,7 @@ const Profile = () => {
 
         const fetchTopBooksAndCovers = async () => {
             try {
-                const topRes = await fetch(`/api/users/getTopFour?userId=${userId}`, {
+                const topRes = await fetch(`/api/users/topFour?userId=${userId}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
 
@@ -121,6 +122,34 @@ const Profile = () => {
         fetchTopBooksAndCovers();
     }, [userId, user?.token]);
 
+    useEffect(() => {
+        if (!userId || !user?.token) return;
+
+        const fetchBio = async () => {
+            try {
+                console.log("📡 Fetching bio for user:", userId);
+
+                const res = await fetch(`/api/users/bio?userId=${userId}`, {
+                    headers: { Authorization: `Bearer ${user.token}` },
+                });
+
+                if (!res.ok) {
+                    console.log("Failed to fetch bio — status:", res.status);
+                    return;
+                }
+
+                const bioData = await res.text(); // or res.json() depending on what your endpoint returns
+                console.log("Fetched bio for user", userId, ":", bioData);
+                setBio(bioData);
+            } catch (e) {
+                console.error("Error fetching bio for user", userId, e);
+            }
+        };
+
+        fetchBio();
+    }, [userId, user?.token]);
+
+
 
     const pluralize = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`;
 
@@ -133,14 +162,14 @@ const Profile = () => {
         <div className="app-container">
             <div className="profile-container">
             <div className="profile-header">
-                <div className="page-title dm-mono-regular-italic">
+                <div className="profile-page-title dm-mono-regular-italic">
                     <h1>PROFILE</h1>
                 </div>
                 <div className="username dm-mono-medium">
                     <p>{user?.username}</p>
                 </div>
             </div>
-                <p className="bio">bio...</p>
+                <p className="bio">{bio}</p>
             <div className="split">
                 <div className="profile-left dm-mono-regular">
                     <p>{pluralize(bookCount, "book", "books")}</p>

@@ -11,7 +11,7 @@ const Browse = () => {
     const [topLocation, setTopLocation] = useState();
     const [locations, setLocations] = useState([]);
     const [owners, setOwners] = useState([]);
-    const [userId, setUserId] = useState(null); // store userId
+    const [userId, setUserId] = useState(null);
 
     const { user } = useAuth();
     const gridRef = useRef();
@@ -26,13 +26,8 @@ const Browse = () => {
             try {
                 const res = await fetch(
                     `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${user.token}`,
-                        },
-                    }
+                    { headers: { Authorization: `Bearer ${user.token}` } }
                 );
-
                 if (!res.ok) throw new Error("Failed to fetch user");
                 const data = await res.json();
                 setUserId(data.id);
@@ -40,7 +35,6 @@ const Browse = () => {
                 console.error("Error fetching user:", err);
             }
         };
-
         fetchUser();
     }, [user]);
 
@@ -48,14 +42,10 @@ const Browse = () => {
     useEffect(() => {
         const fetchLocations = async () => {
             if (!userId || !user?.token) return;
-
             try {
                 const res = await fetch(`/api/locations?userId=${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 });
-
                 if (!res.ok) throw new Error(`Failed to fetch locations: ${res.status}`);
                 const data = await res.json();
                 setLocations(data);
@@ -64,7 +54,6 @@ const Browse = () => {
                 console.error("Failed to fetch locations:", err);
             }
         };
-
         fetchLocations();
     }, [userId, user?.token]);
 
@@ -73,11 +62,9 @@ const Browse = () => {
             try {
                 const query = encodeURIComponent(searchQuery.trim());
                 const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=${MAX_RESULTS}&printType=books&langRestrict=en&orderBy=relevance`;
-
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Failed to fetch search results");
                 const data = await res.json();
-
                 if (!data.items) {
                     setBooks([]);
                     return;
@@ -87,17 +74,14 @@ const Browse = () => {
                     const info = item.volumeInfo || {};
                     const imageLinks = info.imageLinks || {};
                     const isbn13 =
-                        (info.industryIdentifiers || []).find(
-                            (id) => id.type === "ISBN_13"
-                        )?.identifier || null;
-
+                        (info.industryIdentifiers || []).find((id) => id.type === "ISBN_13")
+                            ?.identifier || null;
                     return {
                         id: item.id,
                         title: info.title || "",
                         authors: info.authors || [],
                         thumbnail: imageLinks.thumbnail || null,
-                        description:
-                            info.description || "No description available.",
+                        description: info.description || "No description available.",
                         isbn13,
                         categories: info.categories || [],
                     };
@@ -111,7 +95,22 @@ const Browse = () => {
         }
     };
 
-    // 📚 Click book → show info card
+    // Fetch owners for a book
+    const fetchOwners = async (book) => {
+        if (!book?.isbn13) return;
+        try {
+            const res = await fetch(`/api/books/owners?isbn=${encodeURIComponent(book.isbn13)}`, {
+                headers: { Authorization: `Bearer ${user?.token}` },
+            });
+            if (!res.ok) throw new Error("Failed to fetch owners");
+            const data = await res.json();
+            setOwners(data.owners || []);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    // Click book → show info card
     const handleBookClick = async (book) => {
         if (!gridRef.current) return;
         const gridRect = gridRef.current.getBoundingClientRect();
@@ -124,32 +123,13 @@ const Browse = () => {
 
         setSelectedBook(book);
         setShowForm(false);
-        setOwners([]); // Reset owners while fetching
-
-        try {
-            const res = await fetch(
-                `/api/books/owners?isbn=${encodeURIComponent(book.isbn13)}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${user?.token}`,
-                    },
-                }
-            );
-
-            if (!res.ok) throw new Error("Failed to fetch owners");
-            const data = await res.json();
-            setOwners(data.owners || []);
-        } catch (err) {
-            console.error(err);
-        }
+        setOwners([]); // Reset owners
+        await fetchOwners(book);
     };
 
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (
-                !gridRef.current?.contains(e.target) &&
-                !infoCardRef.current?.contains(e.target)
-            ) {
+            if (!gridRef.current?.contains(e.target) && !infoCardRef.current?.contains(e.target)) {
                 setSelectedBook(null);
                 setShowForm(false);
                 setOwners([]);
@@ -159,7 +139,7 @@ const Browse = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // ➕ Add book to user’s library
+    // Add book to user’s library
     const handleAddBook = async (e) => {
         e.preventDefault();
         if (!selectedBook) return;
@@ -181,10 +161,11 @@ const Browse = () => {
             locationId: locationObj.id,
             dateAdded: boughtOn,
             blurb: selectedBook.description,
+            userId: userId,
         };
 
         try {
-            const res = await fetch("/api/books", {
+            const res = await fetch(`/api/books`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -195,6 +176,9 @@ const Browse = () => {
 
             if (!res.ok) throw new Error("Failed to add book");
             setShowForm(false);
+
+            // 🔄 Refresh owners so UI updates immediately
+            await fetchOwners(selectedBook);
         } catch (err) {
             console.error(err);
             alert("Error adding book. Try again.");
@@ -210,23 +194,13 @@ const Browse = () => {
             <div className="page-body">
                 <div className="browse-grid" ref={gridRef}>
                     {books.map((book) => (
-                        <div
-                            key={book.id}
-                            className="book-item"
-                            onClick={() => handleBookClick(book)}
-                        >
+                        <div key={book.id} className="book-item" onClick={() => handleBookClick(book)}>
                             {book.thumbnail ? (
-                                <img
-                                    src={book.thumbnail}
-                                    alt={book.title}
-                                    className="book-cover"
-                                />
+                                <img src={book.thumbnail} alt={book.title} className="book-cover" />
                             ) : (
                                  <div className="book-cover-placeholder">
                                      <p className="book-title">{book.title}</p>
-                                     <p className="book-authors">
-                                         {book.authors?.join(", ")}
-                                     </p>
+                                     <p className="book-authors">{book.authors?.join(", ")}</p>
                                  </div>
                              )}
                         </div>
@@ -245,30 +219,17 @@ const Browse = () => {
                 </div>
 
                 {selectedBook && (
-                    <div
-                        className="browse-info-card"
-                        style={cardStyle}
-                        ref={infoCardRef}
-                    >
+                    <div className="browse-info-card" style={cardStyle} ref={infoCardRef}>
                         <div className="info-card-content">
-                            <h2 className="dm-mono-medium-italic">
-                                {selectedBook.title}
-                            </h2>
-                            <h3 className="dm-mono-light-italic">
-                                {selectedBook.authors?.join(", ")}
-                            </h3>
+                            <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
+                            <h3 className="dm-mono-light-italic">{selectedBook.authors?.join(", ")}</h3>
 
                             {!showForm ? (
-                                <p className="dm-mono-light">
-                                    {selectedBook.description}
-                                </p>
+                                <p className="dm-mono-light">{selectedBook.description}</p>
                             ) : (
                                  <form className="add-form" onSubmit={handleAddBook}>
                                      <div className="select-wrapper">
-                                         <select
-                                             name="location"
-                                             defaultValue={topLocation}
-                                         >
+                                         <select name="location" defaultValue={topLocation}>
                                              {locations.map((loc) => (
                                                  <option key={loc.id} value={loc.name}>
                                                      {loc.name}
@@ -281,15 +242,10 @@ const Browse = () => {
                                      <input
                                          type="date"
                                          name="boughtOn"
-                                         defaultValue={new Date()
-                                             .toISOString()
-                                             .split("T")[0]}
+                                         defaultValue={new Date().toISOString().split("T")[0]}
                                      />
 
-                                     <button
-                                         type="submit"
-                                         className="form-save-btn"
-                                     >
+                                     <button type="submit" className="form-save-btn">
                                          SAVE
                                      </button>
                                  </form>
@@ -299,33 +255,32 @@ const Browse = () => {
                         {!showForm && (
                             <div className="info-card-footer">
                                 <div className="tags">
-                                    {selectedBook.categories.length > 0 ? (
-                                        selectedBook.categories.map((cat, i) => (
+                                    {selectedBook.categories.length > 0
+                                     ? selectedBook.categories.map((cat, i) => (
                                             <span key={i} className="tag">
-                                                {cat}
-                                            </span>
+                                                  {cat}
+                                              </span>
                                         ))
-                                    ) : (
+                                     : (
                                          <span className="tag">Uncategorized</span>
                                      )}
 
                                     {owners.map((owner, i) => (
-                                        <span
-                                            key={`owner-${i}`}
-                                            className="owner-tag"
-                                        >
+                                        <span key={`owner-${i}`} className="owner-tag">
                                             {owner.username} - {owner.location}
                                         </span>
                                     ))}
                                 </div>
 
-                                <button
-                                    className="info-card-button dm-mono-medium"
-                                    onClick={() => setShowForm(true)}
-                                    ref={buttonRef}
-                                >
-                                    ADD TO LIBRARY
-                                </button>
+                                {!owners.some((o) => o.userId === userId) && (
+                                    <button
+                                        className="info-card-button dm-mono-medium"
+                                        onClick={() => setShowForm(true)}
+                                        ref={buttonRef}
+                                    >
+                                        ADD TO LIBRARY
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>

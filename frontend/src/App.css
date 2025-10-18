@@ -396,16 +396,29 @@ html, body {
 
 .profile-header{
   display: flex;
-  flex: .5;
-  align-items: baseline;
+  flex: .4;
+  margin-top: 3vh;
+  align-items: center;
   color: #28282A;
   letter-spacing: 0.5rem;
+}
+
+.profile-page-title {
+  margin-left: 5rem;
+  font-size: xx-large;
+  letter-spacing: 0.5rem;
+  padding-top: 6px;
+  height: 13vh;
+  display:flex;
+  align-items: center;
 }
 
 .bio {
   font-size: medium;
   letter-spacing: normal;
   margin: 0 5rem;
+  height: 5vh;
+  text-align: right;
 }
 
 .username{
@@ -434,11 +447,11 @@ html, body {
 
 .profile-right {
   flex: 1;
-  margin: 3rem 0;
+  margin: 1.5rem 0;
   justify-content: center;
   align-items: center;
   display: grid;
-  gap: 0rem 6rem;
+  gap: 3rem 6rem;
   grid-template-columns: repeat(2, auto);
 }
 
@@ -459,7 +472,7 @@ html, body {
   width: 10rem;
   position: absolute;
   bottom: 20px;
-  right: 20px;
+  left: 20px;
 }
 
 /******************************************************************/
