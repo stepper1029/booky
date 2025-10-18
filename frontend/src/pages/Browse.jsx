@@ -104,6 +104,7 @@ const Browse = () => {
             });
             if (!res.ok) throw new Error("Failed to fetch owners");
             const data = await res.json();
+            console.log(data.owners);
             setOwners(data.owners || []);
         } catch (err) {
             console.error(err);

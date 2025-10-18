@@ -38,7 +38,7 @@ public interface BookDao extends JpaRepository<Book, Long> {
   );
 
   @Query("""
-        SELECT u.username, l.name
+        SELECT u.username, l.name, u.id
         FROM Book b
         JOIN User u ON b.userId = u.id
         LEFT JOIN Location l ON b.locationId = l.id

@@ -53,9 +53,10 @@ public class BookService {
     for (Object[] row : results) {
       String username = (String) row[0];
       String location = (String) row[1];
-      if (username != null && location != null) {
-        dto.addOwner(username, location);
-        log.info("Username: {}, location: {}", username, location);
+      Integer userId = (Integer) row[2];
+      if (username != null && location != null && userId != null) {
+        dto.addOwner(username, location, userId);
+        log.info("Username: {}, location: {}, userId: {}", username, location, userId);
       }
     }
 

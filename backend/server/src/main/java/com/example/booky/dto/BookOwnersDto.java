@@ -13,8 +13,8 @@ public class BookOwnersDto {
     this.isbn = isbn;
   }
 
-  public void addOwner(String username, String location) {
-    owners.add(new OwnerDTO(username, location));
+  public void addOwner(String username, String location, Integer userId) {
+    owners.add(new OwnerDTO(username, location, userId));
   }
 
   public String getIsbn() {
@@ -34,12 +34,14 @@ public class BookOwnersDto {
   public static class OwnerDTO {
     private String username;
     private String location;
+    private Integer userId;
 
     public OwnerDTO() {}
 
-    public OwnerDTO(String username, String location) {
+    public OwnerDTO(String username, String location, Integer userId) {
       this.username = username;
       this.location = location;
+      this.userId = userId;
     }
 
     public String getUsername() {
@@ -55,5 +57,8 @@ public class BookOwnersDto {
     public void setLocation(String location) {
       this.location = location;
     }
+
+    public Integer getUserId() { return userId;}
+    public void setUserId(Integer userId) { this.userId = userId; };
   }
 }
