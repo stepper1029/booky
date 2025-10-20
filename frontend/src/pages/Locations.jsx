@@ -154,7 +154,7 @@ const Locations = () => {
                             ) : (
                                  <div className="book-cover-placeholder">
                                      <p className="book-title">
-                                         {book.title} by {book.authorFirstName} {book.authorLastName}
+                                         {book.title} by {book.authors}
                                      </p>
                                  </div>
                              )}
@@ -167,7 +167,7 @@ const Locations = () => {
                     <div className="info-card" style={cardStyle}>
                         <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
                         <h3 className="dm-mono-light-italic">
-                            {selectedBook.authorFirstName} {selectedBook.authorLastName}
+                            {selectedBook.authors}
                         </h3>
                         <p className="dm-mono-light">{selectedBook.description}</p>
                     </div>

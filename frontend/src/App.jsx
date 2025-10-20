@@ -6,6 +6,7 @@ import LocationsPage from "./pages/Locations";
 import FriendsPage from "./pages/Friends";
 import ProfilePage from "./pages/Profile";
 import LoginPage from "./pages/Login";
+import Settings from "./pages/Settings";
 import { AuthProvider } from "./AuthContext";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/locations" element={<LocationsPage />} />
                     <Route path="/friends" element={<FriendsPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/settings" element={<Settings />} />
                 </Routes>
             </Router>
         </AuthProvider>

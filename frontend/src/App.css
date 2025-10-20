@@ -475,6 +475,22 @@ html, body {
   left: 20px;
 }
 
+.settings-button {
+  flex: 2;
+  padding: 6px 12px;
+  border: 2px solid #28282A40;
+  border-radius: 8px;
+  color: #28282A40;
+  font-size: medium;
+  cursor: pointer;
+  font-family: "DM Mono", monospace;
+  margin: 1rem;
+  width: 10rem;
+  position: absolute;
+  bottom: 20px;
+  left: 200px;
+}
+
 /******************************************************************/
 /***************************** LOGIN ******************************/
 /******************************************************************/
@@ -529,6 +545,64 @@ html, body {
 .error-text {
   color: red;
   margin-top: 1rem;
+}
+
+/******************************************************************/
+/************************** SETTINGS ******************************/
+/******************************************************************/
+
+.settings-container {
+  display: flex;
+  padding: 2rem;
+}
+
+.settings-header {
+  display: flex;
+  flex: .4;
+  margin-top: 3vh;
+  align-items: center;
+  color: #28282A;
+  letter-spacing: 0.5rem;
+}
+
+.settings-username {
+  font-family: "DM Mono", monospace;
+  font-size: 1.25rem;
+}
+
+.tab-content {
+  flex: 4;
+  margin: 5rem;
+  display: grid;
+  gap: 3rem 6rem;
+  overflow-y: auto;
+}
+
+.locations-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-row {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* faint line between rows */
+}
+
+.location-row:last-child {
+  border-bottom: none; /* remove bottom border on last item */
+}
+
+.location-row h3 {
+  font-family: "DM Mono", monospace;
+  font-weight: normal;
+}
+
+.location-row p {
+  font-family: "DM Mono", monospace;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: #555;
+  margin: 4px 0 0;
 }
 
 /******************************************************************/

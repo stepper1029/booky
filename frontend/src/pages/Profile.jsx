@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import Settings from "./Settings";
 
 const Profile = () => {
     const { user, logout } = useAuth();
@@ -158,6 +159,10 @@ const Profile = () => {
         navigate("/login");
     };
 
+    const handleSettings = () => {
+        navigate("/settings");
+    };
+
     return (
         <div className="app-container">
             <div className="profile-container">
@@ -188,9 +193,14 @@ const Profile = () => {
                     ))}
                 </div>
             </div>
-            <button onClick={handleSignOut} className="signout-button">
-                SIGN OUT
-            </button>
+                <div className="absolute bottom-5 right-5 flex items-center space-x-4">
+                    <button onClick={handleSignOut} className="signout-button">
+                        SIGN OUT
+                    </button>
+                    <button onClick={handleSettings} className="settings-button">
+                        SETTINGS
+                    </button>
+                </div>
             </div>
         </div>
     );
