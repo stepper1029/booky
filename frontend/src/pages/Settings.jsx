@@ -12,6 +12,9 @@ const Settings = () => {
     const sidebarRef = useRef();
     const [userId, setUserId] = useState(null);
     const [bio, setBio] = useState("");
+    const [showAddLocationForm, setShowAddLocationForm] = useState(false);
+    const [newLocationName, setNewLocationName] = useState("");
+
     const { user } = useAuth();
 
     useEffect(() => {
@@ -75,6 +78,32 @@ const Settings = () => {
             .catch(console.error);
     }, [userId, user.token]);
 
+    const handleAddLocation = async (e) => {
+        e.preventDefault();
+        if (!newLocationName.trim() || !userId) return;
+
+        try {
+            const res = await fetch("/api/locations", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify({ name: newLocationName, userId }),
+            });
+
+            if (!res.ok) throw new Error("Failed to add location");
+            const newLoc = await res.json();
+
+            setLocations((prev) => [...prev, newLoc]);
+            setNewLocationName("");
+            setShowAddLocationForm(false);
+        } catch (err) {
+            console.error("Error adding location:", err);
+        }
+    };
+
+
     return (
         <div className="app-container">
             <div className="settings-header">
@@ -114,8 +143,34 @@ const Settings = () => {
                             ) : (
                                  <p className="location-row">No locations added yet.</p>
                              )}
+                            {/* Add Location button */}
+                            <button
+                                className="add-location-button dm-mono-medium"
+                                onClick={() => setShowAddLocationForm(!showAddLocationForm)}
+                            >
+                                {showAddLocationForm ? "CANCEL" : "ADD LOCATION"}
+                            </button>
+                            {/* Popup form */}
+                            {showAddLocationForm && (
+                                <div className="add-location-form">
+                                    <form onSubmit={handleAddLocation}>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter location name"
+                                            value={newLocationName}
+                                            onChange={(e) => setNewLocationName(e.target.value)}
+                                            className="add-location-input"
+                                        />
+                                        <button type="submit" className="submit-location-button">
+                                            ADD
+                                        </button>
+                                    </form>
+                                </div>
+                            )}
                         </div>
+
                     )}
+
 
                     {selectedTab === "Friends" && (
                         <div className="friends-section">

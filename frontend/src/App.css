@@ -293,6 +293,7 @@ html, body {
   flex-direction: column;  /* stack items vertically */
   justify-content: center; /* vertical centering */
   align-items: center;     /* horizontal centering if desired */
+
 }
 
 .sidebar p {
@@ -315,6 +316,7 @@ html, body {
   gap: 3rem 6rem;
   grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
   overflow-y: auto;
+  height: 45vh;
 }
 
 /* Book container */
@@ -581,15 +583,19 @@ html, body {
 .locations-list {
   display: flex;
   flex-direction: column;
+  margin-right: 5rem;
+  height: 40vh;
+  position: relative;
 }
 
 .location-row {
   padding: 12px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* faint line between rows */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
 }
 
 .location-row:last-child {
-  border-bottom: none; /* remove bottom border on last item */
+  border-bottom: none;
 }
 
 .location-row h3 {
@@ -603,6 +609,19 @@ html, body {
   font-size: 0.9rem;
   color: #555;
   margin: 4px 0 0;
+}
+
+.add-location-button {
+  padding: 6px 12px;
+  background: #CD1C18;
+  color: #F5F5F3;
+  border: 2px solid #CD1C18;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: medium;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 /******************************************************************/
