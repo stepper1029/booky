@@ -66,7 +66,7 @@ const Locations = () => {
 
                     try {
                         const googleRes = await fetch(
-                            `https://www.googleapis.com/books/v1/volumes?q=isbn:${encodeURIComponent(book.isbn)}`
+                            `api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,  {headers: { Authorization: `Bearer ${user?.token}` },}
                         );
                         const googleData = await googleRes.json();
                         const volumeInfo = googleData.items?.[0]?.volumeInfo || {};

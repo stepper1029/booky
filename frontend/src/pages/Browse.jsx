@@ -61,10 +61,12 @@ const Browse = () => {
         if (e.key === "Enter" && searchQuery.trim()) {
             try {
                 const query = encodeURIComponent(searchQuery.trim());
-                const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=${MAX_RESULTS}&printType=books&langRestrict=en&orderBy=relevance`;
-                const res = await fetch(url);
+                // Call your backend endpoint
+                const url = `/api/books/search?query=${query}`;
+                const res = await fetch(url, {headers: { Authorization: `Bearer ${user?.token}` },});
                 if (!res.ok) throw new Error("Failed to fetch search results");
                 const data = await res.json();
+
                 if (!data.items) {
                     setBooks([]);
                     return;
@@ -94,6 +96,7 @@ const Browse = () => {
             }
         }
     };
+
 
     // Fetch owners for a book
     const fetchOwners = async (book) => {

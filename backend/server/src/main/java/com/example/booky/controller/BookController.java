@@ -6,10 +6,15 @@ import com.example.booky.service.BookService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -22,6 +27,9 @@ public class BookController {
   private final FriendController friendController;
   private final UserController userController;
 
+  @Value("${API_KEY}")
+  private String apiKey;
+
   public BookController(BookService bookService, FriendController friendController, UserController userController) {
     this.bookService = bookService;
     this.friendController = friendController;
@@ -31,6 +39,23 @@ public class BookController {
     // ----------------------
     // Local DB endpoints
     // ----------------------
+
+  @GetMapping("/search")
+  public ResponseEntity<String> searchBooks(@RequestParam String query) {
+    try {
+      String url = "https://www.googleapis.com/books/v1/volumes?q="
+              + query
+              + "&orderBy=relevance"
+              + "&key=" + apiKey;
+      RestTemplate restTemplate = new RestTemplate();
+      String result = restTemplate.getForObject(url, String.class);
+      log.info("searching google books for {}", query);
+      log.info("results: {}", result);
+      return ResponseEntity.ok(result);
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+  }
 
     @GetMapping("/count/user")
     public int countBooksByUserId(@RequestParam int userId){

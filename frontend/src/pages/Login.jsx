@@ -46,7 +46,6 @@ function Login() {
     };
 
     return (
-        <div className="app-container">
             <div className="login-container">
                 <h2 className="login-header dm-mono-medium-italic">SIGN IN</h2>
                 {error && <p className="error">{error}</p>}
@@ -68,7 +67,6 @@ function Login() {
                     <button type="submit">LOGIN</button>
                 </form>
             </div>
-        </div>
     );
 }
 

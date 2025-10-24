@@ -499,10 +499,11 @@ html, body {
 
 .login-container {
   display: flex;
-  height: 90vh;
+  height: 100vh;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #F5F5F3;
 }
 
 .login-header {
