@@ -55,7 +55,7 @@ const Settings = () => {
                     return;
                 }
 
-                const bioData = await res.text(); // or res.json() depending on what your endpoint returns
+                const bioData = await res.text();
                 console.log("Fetched bio for user", userId, ":", bioData);
                 setBio(bioData);
             } catch (e) {
@@ -68,6 +68,8 @@ const Settings = () => {
 
     // Fetch locations
     useEffect(() => {
+        if (!userId || !user?.token) return;
+
         fetch(`/api/locations?userId=${userId}`, {
             headers: { Authorization: `Bearer ${user.token}` },
         })
@@ -76,7 +78,7 @@ const Settings = () => {
                 setLocations(data);
             })
             .catch(console.error);
-    }, [userId, user.token]);
+    }, [userId, user?.token]);
 
     const handleAddLocation = async (e) => {
         e.preventDefault();
@@ -89,17 +91,27 @@ const Settings = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${user.token}`,
                 },
-                body: JSON.stringify({ name: newLocationName, userId }),
+                body: JSON.stringify({
+                                         name: newLocationName,
+                                         userId: userId
+                                     }),
             });
 
-            if (!res.ok) throw new Error("Failed to add location");
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.error("Server error:", errorText);
+                throw new Error("Failed to add location");
+            }
+
             const newLoc = await res.json();
+            console.log("Location added successfully:", newLoc);
 
             setLocations((prev) => [...prev, newLoc]);
             setNewLocationName("");
             setShowAddLocationForm(false);
         } catch (err) {
             console.error("Error adding location:", err);
+            alert("Failed to add location. Please try again.");
         }
     };
 
@@ -143,13 +155,7 @@ const Settings = () => {
                             ) : (
                                  <p className="location-row">No locations added yet.</p>
                              )}
-                            {/* Add Location button */}
-                            <button
-                                className="add-location-button dm-mono-medium"
-                                onClick={() => setShowAddLocationForm(!showAddLocationForm)}
-                            >
-                                {showAddLocationForm ? "CANCEL" : "ADD LOCATION"}
-                            </button>
+
                             {/* Popup form */}
                             {showAddLocationForm && (
                                 <div className="add-location-form">
@@ -159,18 +165,28 @@ const Settings = () => {
                                             placeholder="Enter location name"
                                             value={newLocationName}
                                             onChange={(e) => setNewLocationName(e.target.value)}
-                                            className="add-location-input"
+                                            className="add-location-input dm-mono-regular"
+                                            autoFocus
                                         />
-                                        <button type="submit" className="submit-location-button">
+                                        <button
+                                            type="submit"
+                                            className="submit-location-button dm-mono-medium"
+                                        >
                                             ADD
                                         </button>
                                     </form>
                                 </div>
                             )}
+
+                            {/* Add Location button */}
+                            <button
+                                className="add-location-button dm-mono-medium"
+                                onClick={() => setShowAddLocationForm(!showAddLocationForm)}
+                            >
+                                {showAddLocationForm ? "CANCEL" : "ADD LOCATION"}
+                            </button>
                         </div>
-
                     )}
-
 
                     {selectedTab === "Friends" && (
                         <div className="friends-section">
@@ -192,7 +208,7 @@ const Settings = () => {
                     <div className="info-card" style={cardStyle}>
                         <h2 className="dm-mono-medium-italic">{selectedBook.title}</h2>
                         <h3 className="dm-mono-light-italic">
-                            {selectedBook.authorFirstName} {selectedBook.authorLastName}
+                            {selectedBook.authors}
                         </h3>
                         <p className="dm-mono-light">{selectedBook.description}</p>
                     </div>
