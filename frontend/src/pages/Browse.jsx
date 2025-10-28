@@ -170,7 +170,7 @@ const Browse = () => {
         };
 
         try {
-            const res = await fetch(`/api/books`, {
+            const res = await fetch(`${API_BASE_URL}/api/books`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
