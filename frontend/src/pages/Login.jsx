@@ -18,7 +18,7 @@ function Login() {
         console.log("Attempting login with:", { username, password });
 
         try {
-            const res = await fetch(`${API_BASE_URL}/api/auth/signin`, {
+            const res = await fetch(`/api/auth/signin`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
