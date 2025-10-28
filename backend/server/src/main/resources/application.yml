@@ -3,7 +3,7 @@ spring:
         name: booky
 
     datasource:
-        url: jdbc:${DB_URL}
+        url: ${DB_URL}
         username: ${DB_USER}
         password: ${DB_PW}
         driver-class-name: org.postgresql.Driver

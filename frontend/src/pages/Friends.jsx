@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../AuthContext";
+import API_BASE_URL from "../config";
 
 const Friends = () => {
     const [friends, setFriends] = useState([]);
@@ -21,7 +22,7 @@ const Friends = () => {
         const fetchUser = async () => {
             try {
                 const res = await fetch(
-                    `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
+                    `${API_BASE_URL}/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
                     {
                         headers: { Authorization: `Bearer ${user.token}` },
                     }
@@ -43,7 +44,7 @@ const Friends = () => {
 
         const fetchFriends = async () => {
             try {
-                const res = await fetch(`/api/friends?userId=${userId}&status=accepted`, {
+                const res = await fetch(`${API_BASE_URL}/api/friends?userId=${userId}&status=accepted`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
                 if (!res.ok) throw new Error("Failed to fetch friends");
@@ -69,7 +70,7 @@ const Friends = () => {
                                                        search: searchQuery,
                                                    });
 
-                const res = await fetch(`/api/books/user?${params.toString()}`, {
+                const res = await fetch(`${API_BASE_URL}/api/books/user?${params.toString()}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
 
@@ -82,7 +83,7 @@ const Friends = () => {
                         if (!book.isbn) return { ...book, coverUrl: "", description: "" };
                         try {
                             const googleRes = await fetch(
-                                `/api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,
+                                `${API_BASE_URL}/api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${user?.token}`,

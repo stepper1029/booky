@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../App.css";
+import API_BASE_URL from '../config';
 import { useAuth } from "../AuthContext";
 
 const Browse = () => {
@@ -25,7 +26,7 @@ const Browse = () => {
             if (!user?.username || !user?.token) return;
             try {
                 const res = await fetch(
-                    `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
+                    `${API_BASE_URL}/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
                     { headers: { Authorization: `Bearer ${user.token}` } }
                 );
                 if (!res.ok) throw new Error("Failed to fetch user");
@@ -43,7 +44,7 @@ const Browse = () => {
         const fetchLocations = async () => {
             if (!userId || !user?.token) return;
             try {
-                const res = await fetch(`/api/locations?userId=${userId}`, {
+                const res = await fetch(`${API_BASE_URL}/api/locations?userId=${userId}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
                 if (!res.ok) throw new Error(`Failed to fetch locations: ${res.status}`);
@@ -62,7 +63,7 @@ const Browse = () => {
             try {
                 const query = encodeURIComponent(searchQuery.trim());
                 // Call your backend endpoint
-                const url = `/api/books/search?query=${query}`;
+                const url = `${API_BASE_URL}/api/books/search?query=${query}`;
                 const res = await fetch(url, {headers: { Authorization: `Bearer ${user?.token}` },});
                 if (!res.ok) throw new Error("Failed to fetch search results");
                 const data = await res.json();
@@ -102,7 +103,7 @@ const Browse = () => {
     const fetchOwners = async (book) => {
         if (!book?.isbn13) return;
         try {
-            const res = await fetch(`/api/books/owners?isbn=${encodeURIComponent(book.isbn13)}`, {
+            const res = await fetch(`${API_BASE_URL}/api/books/owners?isbn=${encodeURIComponent(book.isbn13)}`, {
                 headers: { Authorization: `Bearer ${user?.token}` },
             });
             if (!res.ok) throw new Error("Failed to fetch owners");

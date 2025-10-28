@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import Settings from "./Settings";
+import API_BASE_URL from "../config";
 
 const Profile = () => {
     const { user, logout } = useAuth();
@@ -21,7 +22,7 @@ const Profile = () => {
             try {
                 console.log("Fetching user by username:", user.username);
                 const res = await fetch(
-                    `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
+                    `${API_BASE_URL}/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
                     { headers: { Authorization: `Bearer ${user.token}` } }
                 );
                 if (!res.ok) throw new Error(`Failed to fetch user: HTTP ${res.status}`);
@@ -52,9 +53,9 @@ const Profile = () => {
                 console.log("Fetching counts for userId:", userId);
 
                 const [locRes, bookRes, friendRes] = await Promise.all([
-                                                                           fetch(`/api/locations/count?userId=${userId}`, { headers }),
-                                                                           fetch(`/api/books/count/user?userId=${userId}`, { headers }),
-                                                                           fetch(`/api/friends/count?userId=${userId}`, { headers }),
+                                                                           fetch(`${API_BASE_URL}/api/locations/count?userId=${userId}`, { headers }),
+                                                                           fetch(`${API_BASE_URL}/api/books/count/user?userId=${userId}`, { headers }),
+                                                                           fetch(`${API_BASE_URL}/api/friends/count?userId=${userId}`, { headers }),
                                                                        ]);
 
                 if (!locRes.ok || !bookRes.ok || !friendRes.ok) {
@@ -85,7 +86,7 @@ const Profile = () => {
 
         const fetchTopBooksAndCovers = async () => {
             try {
-                const topRes = await fetch(`/api/users/topFour?userId=${userId}`, {
+                const topRes = await fetch(`${API_BASE_URL}/api/users/topFour?userId=${userId}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
 
@@ -130,7 +131,7 @@ const Profile = () => {
             try {
                 console.log("📡 Fetching bio for user:", userId);
 
-                const res = await fetch(`/api/users/bio?userId=${userId}`, {
+                const res = await fetch(`${API_BASE_URL}/api/users/bio?userId=${userId}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
 

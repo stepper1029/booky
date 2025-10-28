@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {useAuth} from "../AuthContext";
+import API_BASE_URL from "../config";
 
 const Locations = () => {
     const [locations, setLocations] = useState([]);
@@ -18,7 +19,7 @@ const Locations = () => {
         const fetchUser = async () => {
             try {
                 const res = await fetch(
-                    `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
+                    `${API_BASE_URL}/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
                     {
                         headers: { Authorization: `Bearer ${user.token}` },
                     }
@@ -36,7 +37,7 @@ const Locations = () => {
 
     // Fetch locations
     useEffect(() => {
-        fetch(`/api/locations?userId=${userId}`, {
+        fetch(`${API_BASE_URL}/api/locations?userId=${userId}`, {
             headers: { Authorization: `Bearer ${user.token}` },
         })
             .then((res) => res.json())
@@ -56,7 +57,7 @@ const Locations = () => {
                                                search: searchQuery,
                                            });
 
-        fetch(`/api/books/location?${params.toString()}`, {
+        fetch(`${API_BASE_URL}/api/books/location?${params.toString()}`, {
             headers: { Authorization: `Bearer ${user.token}` },
         })
             .then((res) => res.json())
@@ -66,7 +67,7 @@ const Locations = () => {
 
                     try {
                         const googleRes = await fetch(
-                            `api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,  {headers: { Authorization: `Bearer ${user?.token}` },}
+                            `${API_BASE_URL}api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,  {headers: { Authorization: `Bearer ${user?.token}` },}
                         );
                         const googleData = await googleRes.json();
                         const volumeInfo = googleData.items?.[0]?.volumeInfo || {};

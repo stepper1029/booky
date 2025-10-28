@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import {useAuth} from "../AuthContext";
+import API_BASE_URL from "../config";
 
 const Settings = () => {
     const tabs = ["Locations", "Friends", "Top Four"];
@@ -23,7 +24,7 @@ const Settings = () => {
         const fetchUser = async () => {
             try {
                 const res = await fetch(
-                    `/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
+                    `${API_BASE_URL}/api/users/byUsername?username=${encodeURIComponent(user.username)}`,
                     {
                         headers: { Authorization: `Bearer ${user.token}` },
                     }
@@ -46,7 +47,7 @@ const Settings = () => {
             try {
                 console.log("📡 Fetching bio for user:", userId);
 
-                const res = await fetch(`/api/users/bio?userId=${userId}`, {
+                const res = await fetch(`${API_BASE_URL}/api/users/bio?userId=${userId}`, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
 
@@ -70,7 +71,7 @@ const Settings = () => {
     useEffect(() => {
         if (!userId || !user?.token) return;
 
-        fetch(`/api/locations?userId=${userId}`, {
+        fetch(`${API_BASE_URL}/api/locations?userId=${userId}`, {
             headers: { Authorization: `Bearer ${user.token}` },
         })
             .then((res) => res.json())
@@ -85,7 +86,7 @@ const Settings = () => {
         if (!newLocationName.trim() || !userId) return;
 
         try {
-            const res = await fetch("/api/locations", {
+            const res = await fetch(`${API_BASE_URL}/api/locations`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
