@@ -37,6 +37,8 @@ const Locations = () => {
 
     // Fetch locations
     useEffect(() => {
+        if (!userId || !user?.token) return;
+
         fetch(`${API_BASE_URL}/api/locations?userId=${userId}`, {
             headers: { Authorization: `Bearer ${user.token}` },
         })
@@ -67,7 +69,7 @@ const Locations = () => {
 
                     try {
                         const googleRes = await fetch(
-                            `${API_BASE_URL}api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,  {headers: { Authorization: `Bearer ${user?.token}` },}
+                            `${API_BASE_URL}/api/books/search?query=isbn:${encodeURIComponent(book.isbn)}`,  {headers: { Authorization: `Bearer ${user?.token}` },}
                         );
                         const googleData = await googleRes.json();
                         const volumeInfo = googleData.items?.[0]?.volumeInfo || {};
