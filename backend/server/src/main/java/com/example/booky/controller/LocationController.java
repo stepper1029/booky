@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://book-y.netlify.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://book-y.netlify.app", "https://booky-backend-dv2k.onrender.com"})
 @RestController
 @RequestMapping("/api/locations")
 public class LocationController {

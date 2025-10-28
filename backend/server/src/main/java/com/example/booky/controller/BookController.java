@@ -17,7 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://book-y.netlify.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://book-y.netlify.app", "https://booky-backend-dv2k.onrender.com"})
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
