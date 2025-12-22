@@ -7,7 +7,7 @@ const Nav = () => {
     return (
         <nav className="nav">
             <div className="nav-left">
-                <h1 className="dm-mono-regular">THE STACKS</h1>
+                <h1 className="dm-mono-regular">BOOKY</h1>
             </div>
             <div className="nav-right dm-mono-regular">
                 <NavLink
