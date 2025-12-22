@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-DB_URL="postgresql://booky_3yhr_user:Z4gMqNyW2jpBgoxwQisUzX6M71Ox1GGY@dpg-d50oecruibrs73e1h200-a.virginia-postgres.render.com/booky_mmcx"
+DB_URL="postgresql://booky_3yhr_user:Z4gMqNyW2jpBgoxwQisUzX6M71Ox1GGY@dpg-d50oecruibrs73e1h200-a/booky_mmcx"
 
 # CSV directory is the current directory
 CSV_DIR=$(dirname "$0")
