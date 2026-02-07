@@ -13,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 
@@ -35,10 +33,6 @@ public class BookController {
     this.friendController = friendController;
     this.userController = userController;
   }
-
-    // ----------------------
-    // Local DB endpoints
-    // ----------------------
 
   @GetMapping("/search")
   public ResponseEntity<String> searchBooks(@RequestParam String query) {
