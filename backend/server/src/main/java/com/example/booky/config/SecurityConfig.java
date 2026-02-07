@@ -50,7 +50,7 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5173",
+            "http://localhost:3000",
             "https://book-y.netlify.app",
             "https://booky-backend-dv2k.onrender.com"
     ));
